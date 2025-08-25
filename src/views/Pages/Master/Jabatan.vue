@@ -5,12 +5,19 @@
                 <div class="add-item d-flex">
                     <div class="page-title">
                         <h4>HALAMAN JABATAN</h4>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb breadcrumb-pipe">
+                                <li class="breadcrumb-item"><a href="#">User Management</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Jabatan</li>
+                            </ol>
+                        </nav>
                     </div>
                 </div>
                 <ul class="table-top-head">
                     <li>
-                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="Refresh"><i data-feather="rotate-ccw"
-                                class="feather-rotate-ccw"></i></a>
+                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="Refresh" @click="fetchDataFromApi">
+                            <i data-feather="rotate-ccw" class="feather-rotate-ccw"></i>
+                        </a>
                     </li>
                     <li>
                         <a data-bs-toggle="tooltip" data-bs-placement="top" title="Collapse" id="collapse-header"
@@ -59,24 +66,16 @@
                                         <th scope="row">{{ startIndex + index + 1 }}</th>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="avatar avatar-sm me-2 avatar-rounded">
-                                                    <img :src="item.image" alt="img">
-                                                </div>
                                                 <div>
                                                     <div class="lh-1">
-                                                        <span>{{ item.name }}</span>
-                                                    </div>
-                                                    <div class="lh-1">
-                                                        <span class="fs-11 text-muted">
-                                                            <a :href="'mailto:' + item.email">{{ item.email }}</a>
-                                                        </span>
+                                                        <span>{{ item.jabatan }}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
-                                            <span :class="['badge', item.statusClass]">
-                                                <i class="ri-check-fill align-middle me-1"></i>{{ item.status }}
+                                            <span :class="['badge', item.status_class]">
+                                                <i class="ri-check-fill align-middle me-1"></i>{{ item.status_label }}
                                             </span>
                                         </td>
                                         <td class="action-table-data">
@@ -103,7 +102,7 @@
             </div>
 
             <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center mb-3">
+                <ul class="pagination justify-content-end mb-0">
                     <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
                         <a class="page-link" href="javascript:void(0);" @click.prevent="prevPage">Previous</a>
                     </li>
@@ -125,8 +124,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import feather from 'feather-icons';
-import axios from 'axios';
-
+import { jabatanService } from '@/services/usermanagement/jabatanService';
 // State untuk Pagination & Search
 const allData = ref([]);
 const currentPage = ref(1);
@@ -142,8 +140,9 @@ const filteredData = computed(() => {
         return allData.value;
     }
     const query = searchQuery.value.toLowerCase();
+    // Cari berdasarkan nama jabatan
     return allData.value.filter(item => {
-        return item.name.toLowerCase().includes(query) || item.email.toLowerCase().includes(query);
+        return item.jabatan.toLowerCase().includes(query);
     });
 });
 const totalItems = computed(() => filteredData.value.length);
@@ -151,7 +150,6 @@ const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.valu
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value);
 const endIndex = computed(() => startIndex.value + itemsPerPage.value);
 const paginatedData = computed(() => {
-    // Memotong data dari `filteredData`
     return filteredData.value.slice(startIndex.value, endIndex.value);
 });
 
@@ -177,21 +175,16 @@ const nextPage = () => { goToPage(currentPage.value + 1); };
 // Fungsi untuk ambil data dari API
 const fetchDataFromApi = async () => {
     try {
-        // Contoh data dummy untuk sementara
-        const dummyData = [];
-        for (let i = 1; i <= 35; i++) {
-            dummyData.push({
-                id: i,
-                name: `User ${i}`,
-                email: `user${i}@example.com`,
-                image: `/src/assets/img/avatar/avatar-${(i % 15) + 1}.jpg`,
-                status: i % 2 === 0 ? 'Paid' : 'Unpaid',
-                statusClass: i % 2 === 0 ? 'bg-soft-success' : 'bg-soft-danger'
-            });
-        }
-        allData.value = dummyData;
+        const responseData = await jabatanService.getJabatan();
+        // Asumsi data dari API adalah array objek
+        allData.value = responseData.map(item => ({
+            ...item,
+            status_label: item.status === 1 ? 'Aktif' : 'Tidak Aktif',
+            status_class: item.status === 1 ? 'bg-soft-success' : 'bg-soft-danger'
+        }));
     } catch (error) {
-        console.error('Ada kesalahan saat mengambil data:', error);
+        // Error sudah ditangani di service, jadi kita hanya log di sini
+        console.error('Gagal memuat data dari API:', error);
     }
 };
 

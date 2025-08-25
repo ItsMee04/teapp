@@ -31,7 +31,8 @@
                                         <div class="pass-group">
                                             <input :type="showPassword ? 'text' : 'password'" v-model="password"
                                                 class="pass-input" placeholder="Masukkan password" />
-                                            <span class="fas toggle-password" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                                            <span class="fas toggle-password"
+                                                :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
                                                 @click="togglePassword"
                                                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></span>
                                         </div>
@@ -64,15 +65,18 @@
         </div>
     </div>
 </template>
+
 <script setup>
 import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { authService } from "@/services/authService";
 import { showToast } from "@/utilities/toastfy";
 
-const email = ref("")
-const password = ref("")
-const rememberMe = ref(false)
-const showPassword = ref(false)
+const router = useRouter();
+const email = ref("");
+const password = ref("");
+const rememberMe = ref(false);
+const showPassword = ref(false);
 
 const errors = reactive({
     email: "",
@@ -94,67 +98,56 @@ const validateForm = () => {
     errors.email = "";
     errors.password = "";
 
-    if (!email.value && !password.value) {
-        showToast("Email dan Password wajib diisi!", "error")
-        return
-    }
-
-    // Validasi email
     if (!email.value) {
         errors.email = "Email wajib diisi";
         isValid = false;
-        showToast("Email wajib diisi!", "error")
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
         errors.email = "Format email tidak valid";
         isValid = false;
-        showToast("Format email tidak valid!", "error")
     }
 
-    // Validasi password
     if (!password.value) {
         errors.password = "Password wajib diisi";
         isValid = false;
-        showToast("Password wajib diisi!", "error")
     }
 
     return isValid;
 };
 
 const togglePassword = () => {
-    showPassword.value = !showPassword.value
-}
+    showPassword.value = !showPassword.value;
+};
 
-// Login function
+// Fungsi login
 const handleLogin = async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+        showToast("Login gagal, mohon periksa form", "error");
+        return;
+    }
 
     try {
-        const data = await authService.login({
+        // Panggil service, biarkan service yang urus penyimpanan token
+        await authService.login({
             email: email.value,
             password: password.value,
-        })
-
-        // Simpan token ke localStorage
-        localStorage.setItem("token", data.token)
+        });
 
         // Simpan email kalau rememberMe aktif
         if (rememberMe.value) {
-            localStorage.setItem("rememberEmail", email.value)
+            localStorage.setItem("rememberEmail", email.value);
         } else {
-            localStorage.removeItem("rememberEmail")
+            localStorage.removeItem("rememberEmail");
         }
 
-        showToast("Login Berhasil!", "success")
+        showToast("Login Berhasil!", "success");
 
-        // redirect ke dashboard (kalau pakai vue-router)
-        // router.push("/dashboard")
-
+        // Redirect ke dashboard
+        router.push("/dashboard");
     } catch (error) {
-        console.error(error)
-        showToast(
-            error.response?.data?.message || "Login gagal, periksa email & password",
-            "error"
-        )
+        console.error(error);
+        const errorMessage =
+            error.response?.data?.message || "Login gagal, periksa email & password";
+        showToast(errorMessage, "error");
     }
 };
 </script>
