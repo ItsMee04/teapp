@@ -1,40 +1,62 @@
-//CSS TEMPLATE
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import router from './router';
 
-//BOOTSTRAP
-import 'bootstrap/dist/css/bootstrap.min.css'
+// IMPORTS SEMUA DI SINI
+// HANYA IMPORT CSS BOOTSTRAP. JANGAN IMPORT JS BUNDLE-NYA.
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-//FONT AWESOME
-import '@fortawesome/fontawesome-free/css/all.min.css'
+// IMPORT MODUL JAVASCRIPT BOOTSTRAP SECARA SPESIFIK
+import { Tooltip, Dropdown, Collapse } from 'bootstrap';
 
-//FEATHER ICON
-import feather from "feather-icons";
+// Library lainnya
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import feather from 'feather-icons';
+import './assets/css/style.css';
+import VueSimplebar from 'simplebar-vue';
+import 'simplebar-vue/dist/simplebar.min.css';
 
-import './assets/css/style.css'
+import App from './App.vue';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+const app = createApp(App);
+const pinia = createPinia();
 
-import App from './App.vue'
-import router from './router'
+// Fungsi untuk mengaktifkan semua fitur Bootstrap JS yang dibutuhkan
+const activateBootstrapFeatures = () => {
+    // Aktifkan Tooltip
+    document.querySelectorAll('.tooltip').forEach(tooltip => tooltip.remove());
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(tooltipEl => {
+        new Tooltip(tooltipEl);
+    });
 
-// Import komponen dan CSS VueSimplebar
-import VueSimplebar from 'simplebar-vue'; // Perhatikan, impornya dari 'simplebar-vue'
-import 'simplebar-vue/dist/simplebar.min.css'; // Perhatikan, CSS-nya dari 'simplebar-vue'
+    // Aktifkan Dropdown
+    document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(dropdownEl => {
+        new Dropdown(dropdownEl);
+    });
 
-const app = createApp(App)
+    // Aktifkan Collapse
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(collapseEl => {
+        new Collapse(collapseEl);
+    });
+};
 
+// Daftarkan mixin untuk Feather Icons & Fitur Bootstrap
+// Ini akan memastikan ikon dan fitur aktif setiap kali komponen dimuat atau diperbarui
 app.mixin({
     mounted() {
-        feather.replace(); // otomatis ganti <i data-feather="icon-name">
+        feather.replace();
+        activateBootstrapFeatures();
     },
     updated() {
         feather.replace();
+        activateBootstrapFeatures();
     }
 });
-// Ini adalah cara yang benar untuk mendaftarkan plugin VueSimplebar
-// agar komponen <vue-simplebar> bisa digunakan di mana saja
-app.component('VueSimplebar', VueSimplebar);
-app.use(createPinia())
-app.use(router)
 
-app.mount('#app')
+// Daftarkan plugin
+app.component('VueSimplebar', VueSimplebar);
+app.use(pinia);
+app.use(router);
+
+// Mount aplikasi
+app.mount('#app');

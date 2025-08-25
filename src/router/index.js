@@ -15,18 +15,23 @@ const router = createRouter({
       component: Login,
     },
     {
-      path:'/',
+      // Ini rute utama yang akan mengarahkan ke halaman login
+      path: '/',
+      redirect: '/login', // <-- Tambahkan baris ini
+    },
+    {
+      path: '/',
       component: MainLayout,
-      children:[
-        { 
-          path:'/dashboard',
-          name:'dashboard',
-          component:Dashboard
+      children: [
+        {
+          path: '/dashboard',
+          name: 'dashboard',
+          component: Dashboard
         },
-        { 
-          path:'/jabatan',
-          name:'jabatan',
-          component:Jabatan
+        {
+          path: '/jabatan',
+          name: 'jabatan',
+          component: Jabatan
         },
       ]
     }
