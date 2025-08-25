@@ -30,10 +30,10 @@
                                         <label>Password</label>
                                         <div class="pass-group">
                                             <input :type="showPassword ? 'text' : 'password'" v-model="password"
-                                                class="form-control pass-input" placeholder="Masukkan password" />
-                                            <i class="fas" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                                                class="pass-input" placeholder="Masukkan password" />
+                                            <span class="fas toggle-password" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
                                                 @click="togglePassword"
-                                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></span>
                                         </div>
                                         <small v-if="errors.password" class="text-danger">{{ errors.password }}</small>
                                     </div>
@@ -66,6 +66,7 @@
 </template>
 <script setup>
 import { ref, reactive, onMounted } from "vue";
+import { authService } from "@/services/authService";
 import { showToast } from "@/utilities/toastfy";
 
 const email = ref("")
@@ -124,16 +125,36 @@ const togglePassword = () => {
 }
 
 // Login function
-const handleLogin = () => {
+const handleLogin = async () => {
     if (!validateForm()) return;
 
-    // Simulasi login sukses
-    if (rememberMe.value) {
-        localStorage.setItem("rememberEmail", email.value);
-    } else {
-        localStorage.removeItem("rememberEmail");
-    }
+    try {
+        const data = await authService.login({
+            email: email.value,
+            password: password.value,
+        })
 
-   showToast("Login Berhasil !", "success")
+        // Simpan token ke localStorage
+        localStorage.setItem("token", data.token)
+
+        // Simpan email kalau rememberMe aktif
+        if (rememberMe.value) {
+            localStorage.setItem("rememberEmail", email.value)
+        } else {
+            localStorage.removeItem("rememberEmail")
+        }
+
+        showToast("Login Berhasil!", "success")
+
+        // redirect ke dashboard (kalau pakai vue-router)
+        // router.push("/dashboard")
+
+    } catch (error) {
+        console.error(error)
+        showToast(
+            error.response?.data?.message || "Login gagal, periksa email & password",
+            "error"
+        )
+    }
 };
 </script>
