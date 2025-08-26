@@ -158,12 +158,6 @@
                                                     placeholder="Masukkan password" id="editPassword"
                                                     :class="{ 'is-invalid': editErrors.password }" />
 
-                                                <span class="fas toggle-password"
-                                                    :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
-                                                    @click="togglePassword" style="right: 20px; top: 30%;">
-                                                    <!-- Hapus style inline top dan transform di sini, biarkan CSS menanganinya -->
-                                                </span>
-
                                                 <div class="invalid-feedback" v-if="editErrors.password">
                                                     {{ editErrors.password }}
                                                 </div>
@@ -425,53 +419,4 @@ watch(isHeaderCollapsed, (newValue) => {
 });
 </script>
 <style>
-/* Pastikan .pass-group memiliki posisi relatif */
-.pass-group {
-    position: relative;
-    /* Ini sangat PENTING. Menjadikan .pass-group sebagai 'konteks' untuk elemen absolut di dalamnya. */
-
-    /* Opsional: Tambahkan padding-bottom agar pesan error punya ruang dan tidak menutupi apa pun */
-    padding-bottom: 25px;
-    /* Sesuaikan nilainya jika pesan error terlalu panjang atau tumpang tindih */
-}
-
-/* Aturan untuk ikon toggle password */
-.pass-group .toggle-password {
-    position: absolute;
-    /* Posisikan ikon secara absolut relatif terhadap .pass-group */
-    right: 10px;
-    /* Jarak dari kanan */
-    top: 50%;
-    /* Posisikan di tengah secara vertikal */
-    transform: translateY(-50%);
-    /* Geser ke atas setengah tinggi ikon agar benar-benar di tengah */
-    cursor: pointer;
-    z-index: 10;
-    /* Pastikan ikon selalu di atas elemen lain jika ada tumpang tindih */
-}
-
-/* Aturan untuk pesan error validasi */
-.pass-group .invalid-feedback {
-    position: absolute;
-    /* Posisikan pesan error secara absolut */
-    bottom: 0;
-    /* Letakkan di bagian paling bawah .pass-group */
-    left: 0;
-    width: 100%;
-    /* Pastikan warna dan gaya teks sesuai dengan template Anda */
-}
-
-/* Opsional: Untuk sedikit ruang antara input dan pesan error */
-.pass-group .form-control.is-invalid {
-    margin-bottom: 5px;
-}
-
-/* Contoh menimpa di CSS Anda */
-.nama-kelas-tabel td {
-    text-transform: none !important; /* Untuk mencegah perubahan kapitalisasi */
-}
-/* Atau pada span yang menampilkan email */
-.nama-kelas-tabel .email-display-span {
-    text-transform: none !important;
-}
 </style>

@@ -118,7 +118,6 @@ const togglePassword = () => {
     showPassword.value = !showPassword.value;
 };
 
-// Fungsi login
 const handleLogin = async () => {
     if (!validateForm()) {
         showToast("Login gagal, mohon periksa form", "error");
@@ -126,13 +125,11 @@ const handleLogin = async () => {
     }
 
     try {
-        // Panggil service, biarkan service yang urus penyimpanan token
         await authService.login({
             email: email.value,
             password: password.value,
         });
 
-        // Simpan email kalau rememberMe aktif
         if (rememberMe.value) {
             localStorage.setItem("rememberEmail", email.value);
         } else {
@@ -140,13 +137,27 @@ const handleLogin = async () => {
         }
 
         showToast("Login Berhasil!", "success");
-
-        // Redirect ke dashboard
         router.push("/dashboard");
+
     } catch (error) {
-        console.error(error);
-        const errorMessage =
-            error.response?.data?.message || "Login gagal, periksa email & password";
+        // Log error lengkap untuk debugging
+        console.error("Login Error:", error);
+
+        // Inisialisasi pesan error default
+        let errorMessage = "Login gagal, periksa email & password";
+
+        // Cek jika ada respons dari server
+        if (error.response) {
+            // Jika ada pesan spesifik dari data respons, gunakan itu
+            errorMessage = error.response.data.message || error.response.statusText;
+        } else if (error.request) {
+            // Jika tidak ada respons (misalnya, masalah jaringan)
+            errorMessage = "Tidak dapat terhubung ke server. Periksa koneksi Anda.";
+        } else {
+            // Jika ada error lain
+            errorMessage = error.message;
+        }
+
         showToast(errorMessage, "error");
     }
 };
