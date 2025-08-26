@@ -15,5 +15,32 @@ export const jabatanService = {
         }
     },
 
-    // Tambahkan fungsi lain untuk store, update, delete di sini nanti
+    /**
+     * Menyimpan data jabatan baru ke API.
+     * @param {object} data - Objek yang berisi nama_jabatan.
+     * @returns {Promise<object>}
+     */
+    async storeJabatan(data) {
+        try {
+            const response = await api.post("/jabatan/storeJabatan", data);
+            return response.data;
+        } catch (error) {
+            console.error("Gagal menyimpan jabatan:", error.response?.data?.message || error.message);
+            throw error;
+        }
+    },
+
+    async updateJabatan(id, data) {
+        try {
+            const response = await api.put(`/jabatan/updateJabatan/${id}`, data);
+            
+            if (response.data.success) {
+                return response.data;
+            } else {
+                throw new Error(response.data.message || 'Gagal memperbarui data.');
+            }
+        } catch (error) {
+            throw error;
+        }
+    },
 };
