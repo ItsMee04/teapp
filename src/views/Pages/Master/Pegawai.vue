@@ -158,54 +158,72 @@
                                     </button>
                                 </div>
                                 <div class="modal-body custom-modal-body">
-                                    <form @submit.prevent="handleStoreJabatan">
+                                    <form @submit.prevent="handleStorePegawai">
                                         <div class="row">
                                             <div class="mb-3 col-md-6">
                                                 <label class="form-label">NIP
                                                     <span class="text-danger ms-1">*</span>
                                                 </label>
                                                 <input type="text" v-model="form.nip" class="form-control">
+                                                <div class="invalid-feedback" v-if="errors.nip">
+                                                    {{ errors.nip }}
+                                                </div>
                                             </div>
                                             <div class="mb-3 col-md-6">
                                                 <label class="form-label">NAMA<span
                                                         class="text-danger ms-1">*</span></label>
                                                 <input type="text" v-model="form.nama" class="form-control">
+                                                <div class="invalid-feedback" v-if="errors.nama">
+                                                    {{ errors.nama }}
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">ALAMAT<span
                                                     class="text-danger ms-1">*</span></label>
-                                            <textarea v-model="form.alamat" class="form-control" cols="30" rows="4"></textarea>
+                                            <textarea v-model="form.alamat" class="form-control" cols="30"
+                                                rows="4"></textarea>
+                                            <div class="invalid-feedback" v-if="errors.alamat">
+                                                {{ errors.alamat }}
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">KONTAK<span
                                                     class="text-danger ms-1">*</span></label>
                                             <input type="text" v-model="form.kontak" class="form-control">
+                                            <div class="invalid-feedback" v-if="errors.nama">
+                                                {{ errors.kontak }}
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">JABATAN<span
                                                     class="text-danger ms-1">*</span></label>
-                                            <VueMultiselect v-model="form.jabatan" :options="jabatanList"
-                                                :allow-empty="false" :preselect-first="true" :searchable="true"
-                                                placeholder="Pilih Jabatan" label="jabatan" track-by="id">
-                                            </VueMultiselect>
+                                            <div :class="{ 'is-invalid': errors.jabatan }">
+                                                <VueMultiselect v-model="form.jabatan" :options="jabatanList"
+                                                    :allow-empty="false" :preselect-first="true" :searchable="true"
+                                                    placeholder="Pilih Jabatan" label="jabatan" track-by="id">
+                                                </VueMultiselect>
+                                            </div>
+                                            <div class="invalid-feedback" v-if="errors.jabatan">
+                                                {{ errors.jabatan }}
+                                            </div>
                                         </div>
                                         <div class="add-choosen">
                                             <div class="mb-3">
                                                 <label class="form-label">AVATAR</label>
-                                                <div class="image-upload ">
-                                                    <input type="file" name="imagePegawai" id="imagePegawai">
+                                                <div class="image-upload">
+                                                    <input type="file" name="imagePegawai" id="imagePegawai"
+                                                        @change="handleImageChange">
                                                     <div class="image-uploads">
                                                         <i data-feather="upload" class="plus-down-add me-0"></i>
                                                         <h4>UPLOAD AVATAR</h4>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="phone-img"
+                                            <div class="phone-img mt-3" v-if="imagePreviewUrl"
                                                 style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px;">
-                                                <div id="imagePegawaiPreview" alt="previewImage"
-                                                    style="width: 150px; height: 150px; display: block; overflow: hidden;">
-                                                </div>
+                                                <img :src="imagePreviewUrl" alt="previewImage"
+                                                    style="width: 100%; height: 100%; display: block; object-fit: cover;">
                                             </div>
                                         </div>
                                         <div class="modal-footer-btn">
@@ -244,11 +262,11 @@ const jabatanList = ref([]);
 
 const form = ref({
     nip: '',
-    nama:'',
-    alamat:'',
-    kontak:'',
-    jabatan:'',
-
+    nama: '',
+    alamat: '',
+    kontak: '',
+    jabatan: '',
+    image_pegawai: null, // Untuk menyimpan objek file
 });
 
 // State untuk form modal Edit
@@ -301,11 +319,33 @@ const resetForm = () => {
     form.value.alamat = '';
     form.value.kontak = '';
     form.value.jabatan = '';
+    form.value.image_pegawai = null
+    // BARIS TAMBAHAN UNTUK MERESET PRATINJAU GAMBAR
+    imagePreviewUrl.value = null;
     errors.value = {};
     const modalElement = document.getElementById('tambahJabatanModal');
     const modal = Modal.getInstance(modalElement);
     if (modal) {
         modal.hide();
+    }
+};
+
+const imagePreviewUrl = ref(null); // State untuk menyimpan URL pratinjau
+
+const handleImageChange = (event) => {
+    // Ambil file dari event
+    const file = event.target.files[0];
+
+    if (file) {
+        // Simpan objek file ke dalam form untuk diunggah nanti
+        form.value.image_pegawai = file;
+
+        // Buat URL sementara untuk pratinjau gambar
+        // URL.createObjectURL() akan membuat URL lokal di browser
+        imagePreviewUrl.value = URL.createObjectURL(file);
+    } else {
+        // Jika file dibatalkan, reset pratinjau
+        imagePreviewUrl.value = null;
     }
 };
 
