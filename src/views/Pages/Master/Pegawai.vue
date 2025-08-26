@@ -103,13 +103,13 @@
                                         <td class="action-table-data">
                                             <div class="edit-delete-action">
                                                 <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="tooltip"
-                                                    data-bs-target="#editJabatanModal" title="Edit"
+                                                    data-bs-target="#editPegawaiModal" title="Edit"
                                                     @click.prevent="openEditModal(item)">
                                                     <i data-feather="edit" class="feather-edit"></i>
                                                 </a>
 
                                                 <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Hapus"
-                                                    @click.prevent="handleDeleteJabatan(item.id)">
+                                                    @click.prevent="handleDeletePegawai(item.id)">
                                                     <i data-feather="trash-2" class="feather-trash-2"></i>
                                                 </a>
                                             </div>
@@ -141,6 +141,85 @@
             </div>
 
         </div>
+
+        <Teleport to="body">
+            <div class="modal fade" id="tambahPegawaiModal" tabindex="-1" aria-labelledby="tambahPegawaiModalLabel"
+                aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered custom-modal-two">
+                    <div class="modal-content">
+                        <div class="page-wrapper-new p-0">
+                            <div class="content">
+                                <div class="modal-header border-0 custom-modal-header">
+                                    <div class="page-title">
+                                        <h4>TAMBAH JABATAN</h4>
+                                    </div>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <form @submit.prevent="handleStoreJabatan">
+                                        <div class="row">
+                                            <div class="mb-3 col-md-6">
+                                                <label class="form-label">NIP<span
+                                                        class="text-danger ms-1">*</span></label>
+                                                <input type="text" name="nip" class="form-control">
+                                            </div>
+                                            <div class="mb-3 col-md-6">
+                                                <label class="form-label">NAMA<span
+                                                        class="text-danger ms-1">*</span></label>
+                                                <input type="text" name="nama" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">ALAMAT<span
+                                                    class="text-danger ms-1">*</span></label>
+                                            <textarea name="alamat" class="form-control" cols="30" rows="4"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">KONTAK<span
+                                                    class="text-danger ms-1">*</span></label>
+                                            <input type="text" name="kontak" class="form-control">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">JABATAN<span
+                                                    class="text-danger ms-1">*</span></label>
+                                            <VueMultiselect v-model="form.jabatan_id" :options="jabatanList"
+                                                :allow-empty="false" :preselect-first="true" :searchable="true"
+                                                placeholder="Pilih Jabatan" label="jabatan" track-by="id">
+                                            </VueMultiselect>
+                                        </div>
+                                        <div class="add-choosen">
+                                            <div class="mb-3">
+                                                <label class="form-label">AVATAR</label>
+                                                <div class="image-upload ">
+                                                    <input type="file" name="imagePegawai" id="imagePegawai">
+                                                    <div class="image-uploads">
+                                                        <i data-feather="upload" class="plus-down-add me-0"></i>
+                                                        <h4>UPLOAD AVATAR</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="phone-img"
+                                                style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px;">
+                                                <div id="imagePegawaiPreview" alt="previewImage"
+                                                    style="width: 150px; height: 150px; display: block; overflow: hidden;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer-btn">
+                                            <button type="button" class="btn btn-warning me-2"
+                                                data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-secondary">Simpan Jabatan</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
     </div>
 </template>
 <script setup>
@@ -150,8 +229,15 @@ import { showToast } from "@/utilities/toastfy";
 import { initTooltips } from '@/utilities/tooltip';
 import { Modal } from 'bootstrap';
 import Swal from 'sweetalert2';
+// Tambahkan komponen Vue Multiselect
+import VueMultiselect from 'vue-multiselect';
+import 'vue-multiselect/dist/vue-multiselect.css';
 
 import { pegawaiService } from '@/services/usermanagement/pegawaiService';
+import { jabatanService } from '@/services/usermanagement/jabatanService';
+
+// State untuk daftar jabatan
+const jabatanList = ref([]);
 
 const form = ref({
     nip: '',
@@ -180,9 +266,9 @@ const fetchDataFromApi = async () => {
         const responseData = await pegawaiService.getPegawai();
         allData.value = responseData.map(item => ({
             ...item,
-            image: item.image_pegawai 
-                       ? `http://localhost:8000/storage/avatar/${item.image_pegawai}` 
-                       : '/src/assets/img/avatar/avatar-1.jpg',
+            image: item.image_pegawai
+                ? `http://localhost:8000/storage/avatar/${item.image_pegawai}`
+                : '/src/assets/img/avatar/avatar-1.jpg',
             status_label: item.status === 1 ? 'Aktif' : 'Tidak Aktif',
             status_class: item.status === 1 ? 'bg-soft-success' : 'bg-soft-danger'
         }));
@@ -191,11 +277,21 @@ const fetchDataFromApi = async () => {
     }
 };
 
+// Fungsi untuk mengambil data jabatan dari API
+const fetchJabatanList = async () => {
+    try {
+        const response = await jabatanService.getJabatan();
+        jabatanList.value = response; // Pastikan service mengembalikan array objek jabatan
+    } catch (error) {
+        console.error('Gagal memuat data jabatan:', error);
+    }
+};
+
 // COMPUTED PROPERTIES
 const filteredData = computed(() => {
     if (!searchQuery.value) return allData.value;
     const query = searchQuery.value.toLowerCase();
-    return allData.value.filter(item => item.jabatan.toLowerCase().includes(query));
+    return allData.value.filter(item => item.nama.toLowerCase().includes(query));
 });
 const totalItems = computed(() => filteredData.value.length);
 const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
@@ -221,13 +317,14 @@ const toggleHeaderCollapse = () => isHeaderCollapsed.value = !isHeaderCollapsed.
 
 onMounted(() => {
     fetchDataFromApi();
+    fetchJabatanList(); // <-- Panggil fungsi ini saat komponen dimuat
     renderFeatherIcons();
     initTooltips(); // Panggil di sini
 
-    const modalElement = document.getElementById('tambahJabatanModal');
-    if (modalElement) {
-        modalElement.addEventListener('hidden.bs.modal', resetForm);
-    }
+    // const modalElement = document.getElementById('tambahPegawaiModal');
+    // if (modalElement) {
+    //     modalElement.addEventListener('hidden.bs.modal', resetForm);
+    // }
 });
 
 watch(paginatedData, () => {
