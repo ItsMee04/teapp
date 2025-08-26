@@ -161,30 +161,31 @@
                                     <form @submit.prevent="handleStoreJabatan">
                                         <div class="row">
                                             <div class="mb-3 col-md-6">
-                                                <label class="form-label">NIP<span
-                                                        class="text-danger ms-1">*</span></label>
-                                                <input type="text" name="nip" class="form-control">
+                                                <label class="form-label">NIP
+                                                    <span class="text-danger ms-1">*</span>
+                                                </label>
+                                                <input type="text" v-model="form.nip" class="form-control">
                                             </div>
                                             <div class="mb-3 col-md-6">
                                                 <label class="form-label">NAMA<span
                                                         class="text-danger ms-1">*</span></label>
-                                                <input type="text" name="nama" class="form-control">
+                                                <input type="text" v-model="form.nama" class="form-control">
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">ALAMAT<span
                                                     class="text-danger ms-1">*</span></label>
-                                            <textarea name="alamat" class="form-control" cols="30" rows="4"></textarea>
+                                            <textarea v-model="form.alamat" class="form-control" cols="30" rows="4"></textarea>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">KONTAK<span
                                                     class="text-danger ms-1">*</span></label>
-                                            <input type="text" name="kontak" class="form-control">
+                                            <input type="text" v-model="form.kontak" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">JABATAN<span
                                                     class="text-danger ms-1">*</span></label>
-                                            <VueMultiselect v-model="form.jabatan_id" :options="jabatanList"
+                                            <VueMultiselect v-model="form.jabatan" :options="jabatanList"
                                                 :allow-empty="false" :preselect-first="true" :searchable="true"
                                                 placeholder="Pilih Jabatan" label="jabatan" track-by="id">
                                             </VueMultiselect>
@@ -220,6 +221,8 @@
                 </div>
             </div>
         </Teleport>
+
+
     </div>
 </template>
 <script setup>
@@ -241,6 +244,11 @@ const jabatanList = ref([]);
 
 const form = ref({
     nip: '',
+    nama:'',
+    alamat:'',
+    kontak:'',
+    jabatan:'',
+
 });
 
 // State untuk form modal Edit
@@ -287,6 +295,20 @@ const fetchJabatanList = async () => {
     }
 };
 
+const resetForm = () => {
+    form.value.nip = '';
+    form.value.nama = '';
+    form.value.alamat = '';
+    form.value.kontak = '';
+    form.value.jabatan = '';
+    errors.value = {};
+    const modalElement = document.getElementById('tambahJabatanModal');
+    const modal = Modal.getInstance(modalElement);
+    if (modal) {
+        modal.hide();
+    }
+};
+
 // COMPUTED PROPERTIES
 const filteredData = computed(() => {
     if (!searchQuery.value) return allData.value;
@@ -321,10 +343,10 @@ onMounted(() => {
     renderFeatherIcons();
     initTooltips(); // Panggil di sini
 
-    // const modalElement = document.getElementById('tambahPegawaiModal');
-    // if (modalElement) {
-    //     modalElement.addEventListener('hidden.bs.modal', resetForm);
-    // }
+    const modalElement = document.getElementById('tambahPegawaiModal');
+    if (modalElement) {
+        modalElement.addEventListener('hidden.bs.modal', resetForm);
+    }
 });
 
 watch(paginatedData, () => {
