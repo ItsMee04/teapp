@@ -5,6 +5,7 @@ import Dashboard from '@/views/Pages/Dashboard.vue'
 
 //MASTER
 import Jabatan from '@/views/Pages/Master/Jabatan.vue'
+import Pegawai from '@/views/Pages/Master/Pegawai.vue'
 
 // SERVICE
 import { authService } from "@/services/authService.js";
@@ -36,6 +37,11 @@ const router = createRouter({
           path: '/jabatan',
           name: 'jabatan',
           component: Jabatan
+        },
+        {
+          path: '/pegawai',
+          name: 'pegawai',
+          component: Pegawai
         },
       ]
     }
