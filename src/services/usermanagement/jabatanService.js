@@ -43,4 +43,14 @@ export const jabatanService = {
             throw error;
         }
     },
+
+    // Menghapus data jabatan
+    async deleteJabatan(id) {
+        try {
+            const response = await api.delete(`/jabatan/deleteJabatan/${id}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
 };

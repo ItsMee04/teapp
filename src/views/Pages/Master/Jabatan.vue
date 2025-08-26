@@ -85,7 +85,8 @@
                                                     <i data-feather="edit" class="feather-edit"></i>
                                                 </a>
 
-                                                <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Hapus">
+                                                <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Hapus"
+                                                    @click.prevent="handleDeleteJabatan(item.id)">
                                                     <i data-feather="trash-2" class="feather-trash-2"></i>
                                                 </a>
                                             </div>
@@ -207,9 +208,9 @@ import { jabatanService } from '@/services/usermanagement/jabatanService';
 import { showToast } from "@/utilities/toastfy";
 import { initTooltips } from '@/utilities/tooltip';
 import { Modal } from 'bootstrap';
+import Swal from 'sweetalert2';
 
 // STATE
-// ---
 const allData = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
@@ -231,7 +232,6 @@ const errors = ref({});
 const editErrors = ref({}); // <-- Tambahkan ini
 
 // FUNGSI UTAMA
-// ---
 const fetchDataFromApi = async () => {
     try {
         const responseData = await jabatanService.getJabatan();
@@ -346,6 +346,35 @@ const handleEditJabatan = async () => {
         }
         showToast(errorMessage, "error");
     }
+};
+
+const handleDeleteJabatan = async (id) => {
+    Swal.fire({
+        title: "Apakah Anda Yakin?",
+        text: "Anda tidak akan bisa mengembalikannya!",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus!",
+        cancelButtonText: "Batal"
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const response = await jabatanService.deleteJabatan(id);
+
+                if (response.success) {
+                    showToast("Data jabatan berhasil dihapus.", "success");
+                    await fetchDataFromApi();
+                } else {
+                    showToast("Gagal menghapus data.", "error");
+                }
+            } catch (error) {
+                console.error("Error saat menghapus data:", error);
+                const errorMessage = error.response?.data?.message || "Terjadi kesalahan saat menghubungi server.";
+                showToast(errorMessage, "error");
+            }
+        }
+    });
 };
 
 
