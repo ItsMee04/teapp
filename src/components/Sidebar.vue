@@ -31,8 +31,16 @@
                                                 :class="{ 'active': $route.path === '/jabatan' }">Jabatan</router-link>
                                         </li>
                                         <li>
-                                            <router-link to="/Pegawai"
-                                                :class="{ 'active': $route.path === '/Pegawai' }">Pegawai</router-link>
+                                            <router-link to="/pegawai"
+                                                :class="{ 'active': $route.path === '/pegawai' }">Pegawai</router-link>
+                                        </li>
+                                        <li>
+                                            <router-link to="/role"
+                                                :class="{ 'active': $route.path === '/role' }">Role</router-link>
+                                        </li>
+                                        <li>
+                                            <router-link to="/user"
+                                                :class="{ 'active': $route.path === '/user' }">User Account</router-link>
                                         </li>
                                     </ul>
                                 </li>
@@ -207,7 +215,9 @@ const submenuMapping = {
     '/dashboard': 'dashboard',
 
     '/jabatan': 'usermanagement',
-    '/Pegawai': 'usermanagement',
+    '/pegawai': 'usermanagement',
+    '/role': 'usermanagement',
+    '/user': 'usermanagement',
 
     '/chat.html': 'application',
     '/video-call.html': 'application',

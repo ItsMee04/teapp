@@ -4,11 +4,11 @@
             <div class="page-header">
                 <div class="add-item d-flex">
                     <div class="page-title">
-                        <h4>HALAMAN JABATAN</h4>
+                        <h4>HALAMAN ROLE</h4>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb breadcrumb-pipe">
                                 <li class="breadcrumb-item"><a href="#">User Management</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Jabatan</li>
+                                <li class="breadcrumb-item active" aria-current="page">Role</li>
                             </ol>
                         </nav>
                     </div>
@@ -27,9 +27,9 @@
                     </li>
                 </ul>
                 <div class="page-btn import">
-                    <a href="#" class="btn btn-added color" data-bs-toggle="modal" data-bs-target="#tambahJabatanModal">
+                    <a href="#" class="btn btn-added color" data-bs-toggle="modal" data-bs-target="#tambahRoleModal">
                         <i data-feather="plus-circle" class="me-2"></i>
-                        Tambah Jabatan
+                        Tambah Role
                     </a>
                 </div>
             </div>
@@ -52,7 +52,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">No.</th>
-                                        <th scope="col">Jabatan</th>
+                                        <th scope="col">Role</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
@@ -67,7 +67,7 @@
                                             <div class="d-flex align-items-center">
                                                 <div>
                                                     <div class="lh-1">
-                                                        <span>{{ item.jabatan }}</span>
+                                                        <span>{{ item.role }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -80,13 +80,13 @@
                                         <td class="action-table-data">
                                             <div class="edit-delete-action">
                                                 <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="tooltip"
-                                                    data-bs-target="#editJabatanModal" title="Edit"
+                                                    data-bs-target="#editRoleModal" title="Edit"
                                                     @click.prevent="openEditModal(item)">
                                                     <i data-feather="edit" class="feather-edit"></i>
                                                 </a>
 
                                                 <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Hapus"
-                                                    @click.prevent="handleDeleteJabatan(item.id)">
+                                                    @click.prevent="handleDeleteRole(item.id)">
                                                     <i data-feather="trash-2" class="feather-trash-2"></i>
                                                 </a>
                                             </div>
@@ -120,7 +120,7 @@
         </div>
 
         <Teleport to="body">
-            <div class="modal fade" id="tambahJabatanModal" tabindex="-1" aria-labelledby="tambahJabatanModalLabel"
+            <div class="modal fade" id="tambahRoleModal" tabindex="-1" aria-labelledby="tambahRoleModalLabel"
                 aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
                 <div class="modal-dialog modal-dialog-centered custom-modal-two">
                     <div class="modal-content">
@@ -128,26 +128,26 @@
                             <div class="content">
                                 <div class="modal-header border-0 custom-modal-header">
                                     <div class="page-title">
-                                        <h4>TAMBAH JABATAN</h4>
+                                        <h4>TAMBAH ROLE</h4>
                                     </div>
                                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body custom-modal-body">
-                                    <form @submit.prevent="handleStoreJabatan">
+                                    <form @submit.prevent="handleStoreRole">
                                         <div class="mb-3">
-                                            <label for="namaJabatan" class="form-label">Nama Jabatan</label>
-                                            <input type="text" class="form-control" id="namaJabatan"
-                                                v-model="form.jabatan" :class="{ 'is-invalid': errors.jabatan }">
-                                            <div class="invalid-feedback" v-if="errors.jabatan">
-                                                {{ errors.jabatan }}
+                                            <label for="namaRole" class="form-label">Nama Role</label>
+                                            <input type="text" class="form-control" id="namaRole" v-model="form.role"
+                                                :class="{ 'is-invalid': errors.role }">
+                                            <div class="invalid-feedback" v-if="errors.role">
+                                                {{ errors.role }}
                                             </div>
                                         </div>
                                         <div class="modal-footer-btn">
                                             <button type="button" class="btn btn-warning me-2"
                                                 data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-secondary">Simpan Jabatan</button>
+                                            <button type="submit" class="btn btn-secondary">Simpan Role</button>
                                         </div>
                                     </form>
                                 </div>
@@ -159,35 +159,34 @@
         </Teleport>
 
         <Teleport to="body">
-            <div class="modal fade" id="editJabatanModal" tabindex="-1" aria-labelledby="editJabatanModal"
-                aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModal" aria-hidden="true"
+                data-bs-backdrop="static" data-bs-keyboard="false">
                 <div class="modal-dialog modal-dialog-centered custom-modal-two">
                     <div class="modal-content">
                         <div class="page-wrapper-new p-0">
                             <div class="content">
                                 <div class="modal-header border-0 custom-modal-header">
                                     <div class="page-title">
-                                        <h4>EDIT JABATAN</h4>
+                                        <h4>EDIT ROLE</h4>
                                     </div>
                                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body custom-modal-body">
-                                    <form @submit.prevent="handleEditJabatan">
+                                    <form @submit.prevent="handleEditRole">
                                         <div class="mb-3">
-                                            <label for="editNamaJabatan" class="form-label">Nama Jabatan</label>
-                                            <input type="text" class="form-control" id="editNamaJabatan"
-                                                v-model="editForm.jabatan"
-                                                :class="{ 'is-invalid': editErrors.jabatan }">
-                                            <div class="invalid-feedback" v-if="editErrors.jabatan">
-                                                {{ editErrors.jabatan }}
+                                            <label for="editNamaRole" class="form-label">Nama Role</label>
+                                            <input type="text" class="form-control" id="editNamaRole"
+                                                v-model="editForm.role" :class="{ 'is-invalid': editErrors.role }">
+                                            <div class="invalid-feedback" v-if="editErrors.role">
+                                                {{ editErrors.role }}
                                             </div>
                                         </div>
                                         <div class="modal-footer-btn">
                                             <button type="button" class="btn btn-warning me-2"
                                                 data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-secondary">Simpan Jabatan</button>
+                                            <button type="submit" class="btn btn-secondary">Simpan Role</button>
                                         </div>
                                     </form>
                                 </div>
@@ -197,44 +196,42 @@
                 </div>
             </div>
         </Teleport>
-
     </div>
 </template>
-
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import feather from 'feather-icons';
-import { jabatanService } from '@/services/usermanagement/jabatanService';
+import { roleService } from '@/services/usermanagement/roleService';
 import { showToast } from "@/utilities/toastfy";
 import { initTooltips } from '@/utilities/tooltip';
 import { Modal } from 'bootstrap';
 import Swal from 'sweetalert2';
 
+// ===================================
 // STATE
+// ===================================
 const allData = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
 const searchQuery = ref('');
 const isHeaderCollapsed = ref(false);
-
 const form = ref({
-    jabatan: '',
+    role: '',
 });
-
-// State untuk form modal Edit
 const editForm = ref({
     id: null,
-    jabatan: '',
+    role: '',
 });
-
 const errors = ref({});
-// State untuk validasi form 'Edit'
-const editErrors = ref({}); // <-- Tambahkan ini
+const editErrors = ref({}); 
 
-// FUNGSI UTAMA
+// ===================================
+// LOGIKA UNTUK TAMBAH
+// ===================================
+// Fungsi fetch data role dari api
 const fetchDataFromApi = async () => {
     try {
-        const responseData = await jabatanService.getJabatan();
+        const responseData = await roleService.getRole();
         allData.value = responseData.map(item => ({
             ...item,
             status_label: item.status === 1 ? 'Aktif' : 'Tidak Aktif',
@@ -248,14 +245,14 @@ const fetchDataFromApi = async () => {
 // Fungsi VALIDASI yang sudah diperbaiki agar bisa menerima argumen
 const validateForm = (formData, errorState) => {
     errorState.value = {}; // Reset error
-    if (!formData.jabatan) {
-        errorState.value.jabatan = "Nama Jabatan tidak boleh kosong.";
+    if (!formData.role) {
+        errorState.value.role = "Nama Role tidak boleh kosong.";
     }
     return Object.keys(errorState.value).length === 0;
 };
 
 // Fungsi untuk submit form 'Tambah'
-const handleStoreJabatan = async () => {
+const handleStoreRole = async () => {
     // Panggil validateForm dan berikan form 'tambah' serta errors-nya
     if (!validateForm(form.value, errors)) {
         showToast("Ada kesalahan pada form. Silakan periksa kembali.", "error");
@@ -263,12 +260,12 @@ const handleStoreJabatan = async () => {
     }
 
     try {
-        const response = await jabatanService.storeJabatan({ jabatan: form.value.jabatan });
+        const response = await roleService.storeRole({ role: form.value.role });
 
         if (response.success) {
+            await fetchDataFromApi();
             showToast(response.message, "success");
             resetForm(); // Panggil fungsi reset
-            await fetchDataFromApi();
         } else {
             showToast(response.message || 'Gagal menyimpan data.', "error");
         }
@@ -289,27 +286,32 @@ const handleStoreJabatan = async () => {
         showToast(errorMessage, "error");
     }
 };
-
+// Fungsi untuk submit form 'Reset Form'
 const resetForm = () => {
-    form.value.jabatan = '';
+    form.value.role = '';
     errors.value = {};
-    const modalElement = document.getElementById('tambahJabatanModal');
+    const modalElement = document.getElementById('tambahRoleModal');
     const modal = Modal.getInstance(modalElement);
     if (modal) {
         modal.hide();
     }
 };
 
+// ===================================
+// LOGIKA UNTUK EDIT
+// ===================================
+// Fungsi untuk open modal edit
 const openEditModal = (item) => {
     editForm.value.id = item.id;
-    editForm.value.jabatan = item.jabatan;
+    editForm.value.role = item.role;
     editErrors.value = {}; // Reset error edit saat modal dibuka
-    const modalElement = document.getElementById('editJabatanModal');
+    const modalElement = document.getElementById('editRoleModal');
     const modal = new Modal(modalElement);
     modal.show();
 };
 
-const handleEditJabatan = async () => {
+// Fungsi untuk submit form 'Edit'
+const handleEditRole = async () => {
     // Panggil validateForm dan berikan form 'edit' dan errors-nya
     if (!validateForm(editForm.value, editErrors)) {
         showToast("Ada kesalahan pada form. Silakan periksa kembali.", "error");
@@ -317,18 +319,18 @@ const handleEditJabatan = async () => {
     }
 
     try {
-        const response = await jabatanService.updateJabatan(editForm.value.id, {
-            jabatan: editForm.value.jabatan
+        const response = await roleService.updateRole(editForm.value.id, {
+            role: editForm.value.role
         });
 
         if (response.success) {
+            await fetchDataFromApi();
             showToast(response.message, "success");
-            const modalElement = document.getElementById('editJabatanModal');
+            const modalElement = document.getElementById('editRoleModal');
             const modal = Modal.getInstance(modalElement);
             if (modal) {
                 modal.hide();
             }
-            await fetchDataFromApi();
         } else {
             showToast(response.message || 'Gagal memperbarui data.', "error");
         }
@@ -348,7 +350,11 @@ const handleEditJabatan = async () => {
     }
 };
 
-const handleDeleteJabatan = async (id) => {
+// ===================================
+// LOGIKA UNTUK DELETE
+// ===================================
+// Fungsi untuk submit delete
+const handleDeleteRole = async (id) => {
     Swal.fire({
         title: "Apakah Anda Yakin?",
         text: "Anda tidak akan bisa mengembalikannya!",
@@ -360,11 +366,11 @@ const handleDeleteJabatan = async (id) => {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                const response = await jabatanService.deleteJabatan(id);
+                const response = await roleService.deleteRole(id);
 
                 if (response.success) {
-                    showToast("Data jabatan berhasil dihapus.", "success");
                     await fetchDataFromApi();
+                    showToast("Data role berhasil dihapus.", "success");
                 } else {
                     showToast("Gagal menghapus data.", "error");
                 }
@@ -377,8 +383,9 @@ const handleDeleteJabatan = async (id) => {
     });
 };
 
-// COMPUTED PROPERTIES
-// ---
+// ===================================
+// COMPUTED PROPERTI
+// ===================================
 const filteredData = computed(() => {
     if (!searchQuery.value) return allData.value;
     const query = searchQuery.value.toLowerCase();
@@ -390,9 +397,9 @@ const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value);
 const endIndex = computed(() => startIndex.value + itemsPerPage.value);
 const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value));
 
-
+// ===================================
 // METODE NAVIGASI
-// ---
+// ===================================
 const goToPage = (page) => {
     if (page >= 1 && page <= totalPages.value) {
         currentPage.value = page;
@@ -401,9 +408,9 @@ const goToPage = (page) => {
 const prevPage = () => goToPage(currentPage.value - 1);
 const nextPage = () => goToPage(currentPage.value + 1);
 
-
+// ===================================
 // LIFECYCLE HOOKS & WATCHER
-// ---
+// ===================================
 const renderFeatherIcons = () => feather.replace();
 
 const toggleHeaderCollapse = () => isHeaderCollapsed.value = !isHeaderCollapsed.value;
