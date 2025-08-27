@@ -82,12 +82,11 @@
                                         </td>
                                         <td class="action-table-data">
                                             <div class="edit-delete-action">
-                                                <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="tooltip"
+                                                <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="modal"
                                                     data-bs-target="#editJenisModal" title="Edit"
                                                     @click.prevent="openEditModal(item)">
                                                     <i data-feather="edit" class="feather-edit"></i>
                                                 </a>
-
                                                 <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Hapus"
                                                     @click.prevent="handleDeleteJenis(item.id)">
                                                     <i data-feather="trash-2" class="feather-trash-2"></i>
@@ -104,13 +103,11 @@
                                     <a class="page-link" href="javascript:void(0);"
                                         @click.prevent="prevPage">Previous</a>
                                 </li>
-
                                 <li class="page-item" v-for="page in totalPages" :key="page"
                                     :class="{ 'active': currentPage === page }">
                                     <a class="page-link" href="javascript:void(0);" @click.prevent="goToPage(page)">{{
                                         page }}</a>
                                 </li>
-
                                 <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
                                     <a class="page-link" href="javascript:void(0);" @click.prevent="nextPage">Next</a>
                                 </li>
@@ -233,7 +230,7 @@
                                         </div>
                                         <div class="modal-footer-btn">
                                             <button type="button" class="btn btn-warning me-2"
-                                                data-bs-dismiss="modal">Batal</button>
+                                                @click="closeEditModal">Batal</button>
                                             <button type="submit" class="btn btn-secondary">Simpan Jenis</button>
                                         </div>
                                     </form>
@@ -268,18 +265,17 @@ const form = ref({
     image_jenis_produk: null,
 });
 
-// State untuk form 'Edit'
 const editForm = ref({
     id: null,
     jenis: "",
-    image_jenis_produk: null, // Nama file gambar dari database
-    new_image_file: null // Properti baru untuk file yang diunggah
+    image_jenis_produk: null,
+    new_image_file: null,
+    currentImageUrl: null
 });
 
 const errors = ref({});
 const editErrors = ref({});
 const imagePreviewUrl = ref(null);
-const newImagePreviewUrl = ref(null); // State untuk pratinjau gambar yang baru diunggah
 
 // ===================================
 // LOGIKA UNTUK TAMBAH
@@ -354,79 +350,63 @@ const handleStoreJenis = async () => {
 // ===================================
 // LOGIKA UNTUK EDIT
 // ===================================
-
-// Fungsi untuk menangani perubahan gambar di modal edit
-const handleEditImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        // Simpan file ke state form
-        editForm.value.new_image_file = file;
-
-        // Buat URL sementara untuk pratinjau
-        newImagePreviewUrl.value = URL.createObjectURL(file);
-    } else {
-        // Jika file dibatalkan, reset
-        editForm.value.new_image_file = null;
-        newImagePreviewUrl.value = null;
-    }
-};
-
-// Computed property untuk menampilkan pratinjau gambar
-const editImageUrl = computed(() => {
-    // Prioritaskan gambar yang baru diunggah
-    if (newImagePreviewUrl.value) {
-        return newImagePreviewUrl.value;
-    }
-    // Jika tidak ada, gunakan gambar dari database (jika ada)
-    if (editForm.value.image_jenis_produk) {
-        const BASE_IMAGE_URL = 'http://127.0.0.1:8000/storage/icon/';
-        return BASE_IMAGE_URL + editForm.value.image_jenis_produk;
-    }
-    return null;
-});
-
 const openEditModal = (item) => {
-    // Mengisi form dengan data jenis yang dipilih
     editForm.value.id = item.id;
     editForm.value.jenis = item.jenis_produk;
-
-    // Salin nama file gambar lama
     editForm.value.image_jenis_produk = item.image_jenis_produk;
-    // Reset file yang baru diunggah dan URL pratinjau
+
     editForm.value.new_image_file = null;
-    newImagePreviewUrl.value = null;
 
-    // Reset error
+    const BASE_IMAGE_URL = 'http://127.0.0.1:8000/storage/icon/';
+    const cacheBuster = `?t=${new Date().getTime()}`;
+    editForm.value.currentImageUrl = item.image_jenis_produk
+        ? `${BASE_IMAGE_URL}${item.image_jenis_produk}${cacheBuster}`
+        : null;
+
     editErrors.value = {};
-
     const modalElement = document.getElementById('editJenisModal');
     const modal = new Modal(modalElement);
     modal.show();
 };
 
-const handleUpdateJenis = async () => {
-    // Anda perlu membuat validasi form update di sini
-    // ...
+const handleEditImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        editForm.value.new_image_file = file;
+    } else {
+        editForm.value.new_image_file = null;
+    }
+};
 
+const editImageUrl = computed(() => {
+    if (editForm.value.new_image_file) {
+        return URL.createObjectURL(editForm.value.new_image_file);
+    }
+    return editForm.value.currentImageUrl;
+});
+
+const handleUpdateJenis = async () => {
     const formData = new FormData();
-    formData.append('_method', 'PUT'); // Penting untuk Laravel
+    formData.append('_method', 'PUT');
     formData.append('jenisproduk', editForm.value.jenis);
 
-    // Kirim gambar yang baru jika ada
-    if (editForm.value.image_jenis_produk) {
+    if (editForm.value.new_image_file) {
         formData.append('imagejenisproduk', editForm.value.new_image_file);
     }
 
     try {
         await jenisService.updateJenis(editForm.value.id, formData);
         showToast('Data jenis berhasil diperbarui!', 'success');
-        // Tutup modal edit
+
         const modalElement = document.getElementById('editJenisModal');
         const modal = Modal.getInstance(modalElement);
         if (modal) {
             modal.hide();
         }
-        fetchDataFromApi(); // Muat ulang data
+
+        hideModalBackdrop();
+
+        fetchDataFromApi();
     } catch (error) {
         if (error.response && error.response.data && error.response.data.errors) {
             editErrors.value = error.response.data.errors;
@@ -438,13 +418,57 @@ const handleUpdateJenis = async () => {
     }
 };
 
+const hideModalBackdrop = () => {
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+        backdrop.remove();
+    }
+};
+
+// Fungsi baru untuk menutup modal edit
+const closeEditModal = () => {
+    const modalElement = document.getElementById('editJenisModal');
+    const modal = Modal.getInstance(modalElement);
+    if (modal) {
+        modal.hide();
+    }
+    hideModalBackdrop();
+};
+
+// ===================================
+// LOGIKA UNTUK HAPUS
+// ===================================
+const handleDeleteJenis = async (id) => {
+    Swal.fire({
+        title: "Apakah Anda yakin?",
+        text: "Data yang dihapus tidak dapat dikembalikan!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, hapus!",
+        cancelButtonText: "Batal",
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                await jenisService.deleteJenis(id);
+                showToast("Data berhasil dihapus!", "success");
+                await fetchDataFromApi();
+            } catch (error) {
+                console.error("Gagal menghapus data jenis:", error);
+                showToast("Terjadi kesalahan saat menghapus data jenis.", "error");
+            }
+        }
+    });
+};
+
 // ===================================
 // COMPUTED PROPERTI
 // ===================================
 const filteredData = computed(() => {
     if (!searchQuery.value) return allData.value;
     const query = searchQuery.value.toLowerCase();
-    return allData.value.filter(item => item.jenis.toLowerCase().includes(query));
+    return allData.value.filter(item => item.jenis_produk.toLowerCase().includes(query));
 });
 const totalItems = computed(() => filteredData.value.length);
 const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
@@ -467,33 +491,30 @@ const nextPage = () => goToPage(currentPage.value + 1);
 // LIFECYCLE HOOKS & WATCHER
 // ===================================
 const renderFeatherIcons = () => feather.replace();
-
 const toggleHeaderCollapse = () => isHeaderCollapsed.value = !isHeaderCollapsed.value;
 
 onMounted(() => {
     fetchDataFromApi();
     renderFeatherIcons();
-    initTooltips(); // Panggil di sini
-
+    initTooltips();
     const addModal = document.getElementById('tambahJenisModal');
     if (addModal) {
         addModal.addEventListener('hidden.bs.modal', resetForm);
     }
-    // Tambahkan listener untuk modal edit
     const editModal = document.getElementById('editJenisModal');
     if (editModal) {
         editModal.addEventListener('hidden.bs.modal', () => {
-            // Reset pratinjau gambar saat modal edit ditutup
             editForm.value.new_image_file = null;
-            newImagePreviewUrl.value = null;
+            editForm.value.currentImageUrl = null;
         });
     }
 });
 
 watch(paginatedData, () => {
     renderFeatherIcons();
-    initTooltips(); // Panggil di sini
+    initTooltips();
 });
+
 watch(searchQuery, () => currentPage.value = 1);
 watch(isHeaderCollapsed, (newValue) => {
     if (newValue) {
