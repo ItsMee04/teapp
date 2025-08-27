@@ -12,6 +12,7 @@ import User from '@/views/Pages/Master/User.vue'
 import Kondisi from '@/views/Pages/Master/Kondisi.vue'
 import Diskon from '@/views/Pages/Master/Diskon.vue'
 import Jenis from '@/views/Pages/Master/Jenis.vue'
+import Produk from '@/views/Pages/Master/Produk.vue'
 
 // SERVICE
 import { authService } from "@/services/authService.js";
@@ -73,6 +74,11 @@ const router = createRouter({
           path: '/jenisproduk',
           name: 'jenis',
           component: Jenis
+        },
+        {
+          path: '/produk',
+          name: 'produk',
+          component: Produk
         },
       ]
     }
