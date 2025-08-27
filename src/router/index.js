@@ -9,6 +9,10 @@ import Pegawai from '@/views/Pages/Master/Pegawai.vue'
 import Role from '@/views/Pages/Master/Role.vue'
 import User from '@/views/Pages/Master/User.vue'
 
+import Kondisi from '@/views/Pages/Master/Kondisi.vue'
+import Diskon from '@/views/Pages/Master/Diskon.vue'
+import Jenis from '@/views/Pages/Master/Jenis.vue'
+
 // SERVICE
 import { authService } from "@/services/authService.js";
 
@@ -54,6 +58,21 @@ const router = createRouter({
           path: '/user',
           name: 'user',
           component: User
+        },
+        {
+          path: '/kondisi',
+          name: 'kondisi',
+          component: Kondisi
+        },
+        {
+          path: '/diskon',
+          name: 'diskon',
+          component: Diskon
+        },
+        {
+          path: '/jenis',
+          name: 'jenis',
+          component: Jenis
         },
       ]
     }

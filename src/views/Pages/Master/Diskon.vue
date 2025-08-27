@@ -4,11 +4,11 @@
             <div class="page-header">
                 <div class="add-item d-flex">
                     <div class="page-title">
-                        <h4>HALAMAN ROLE</h4>
+                        <h4>HALAMAN DISKON</h4>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb breadcrumb-pipe">
-                                <li class="breadcrumb-item"><a href="#">User Management</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Role</li>
+                                <li class="breadcrumb-item"><a href="#">Produk</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">DISKON</li>
                             </ol>
                         </nav>
                     </div>
@@ -27,9 +27,9 @@
                     </li>
                 </ul>
                 <div class="page-btn import">
-                    <a href="#" class="btn btn-added color" data-bs-toggle="modal" data-bs-target="#tambahRoleModal">
+                    <a href="#" class="btn btn-added color" data-bs-toggle="modal" data-bs-target="#tambahDiskonModal">
                         <i data-feather="plus-circle" class="me-2"></i>
-                        Tambah Role
+                        Tambah Diskon
                     </a>
                 </div>
             </div>
@@ -52,14 +52,15 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">No.</th>
-                                        <th scope="col">Role</th>
+                                        <th scope="col">Dkiskon / Promo</th>
+                                        <th scope="col">Nilai</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-if="paginatedData.length === 0">
-                                        <td colspan="4" class="text-center">Tidak ada data.</td>
+                                        <td colspan="5" class="text-center">Tidak ada data.</td>
                                     </tr>
                                     <tr v-else v-for="(item, index) in paginatedData" :key="index">
                                         <th scope="row">{{ startIndex + index + 1 }}</th>
@@ -67,7 +68,16 @@
                                             <div class="d-flex align-items-center">
                                                 <div>
                                                     <div class="lh-1">
-                                                        <span>{{ item.role }}</span>
+                                                        <span>{{ item.diskon }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div>
+                                                    <div class="lh-1">
+                                                        <span>{{ item.nilai }} %</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -80,13 +90,13 @@
                                         <td class="action-table-data">
                                             <div class="edit-delete-action">
                                                 <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="tooltip"
-                                                    data-bs-target="#editRoleModal" title="Edit"
+                                                    data-bs-target="#editDiskonModal" title="Edit"
                                                     @click.prevent="openEditModal(item)">
                                                     <i data-feather="edit" class="feather-edit"></i>
                                                 </a>
 
                                                 <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Hapus"
-                                                    @click.prevent="handleDeleteRole(item.id)">
+                                                    @click.prevent="handleDeleteDiskon(item.id)">
                                                     <i data-feather="trash-2" class="feather-trash-2"></i>
                                                 </a>
                                             </div>
@@ -120,7 +130,7 @@
         </div>
 
         <Teleport to="body">
-            <div class="modal fade" id="tambahRoleModal" tabindex="-1" aria-labelledby="tambahRoleModalLabel"
+            <div class="modal fade" id="tambahDiskonModal" tabindex="-1" aria-labelledby="tambahDiskonModalLabel"
                 aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
                 <div class="modal-dialog modal-dialog-centered custom-modal-two">
                     <div class="modal-content">
@@ -128,26 +138,34 @@
                             <div class="content">
                                 <div class="modal-header border-0 custom-modal-header">
                                     <div class="page-title">
-                                        <h4>TAMBAH ROLE</h4>
+                                        <h4>TAMBAH DISKON</h4>
                                     </div>
                                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body custom-modal-body">
-                                    <form @submit.prevent="handleStoreRole">
+                                    <form @submit.prevent="handleStoreDiskon">
                                         <div class="mb-3">
-                                            <label for="namaRole" class="form-label">Nama Role</label>
-                                            <input type="text" class="form-control" id="namaRole" v-model="form.role"
-                                                :class="{ 'is-invalid': errors.role }">
-                                            <div class="invalid-feedback" v-if="errors.role">
-                                                {{ errors.role }}
+                                            <label for="namaDiskon" class="form-label">Nama Diskon</label>
+                                            <input type="text" class="form-control" id="namaDiskon"
+                                                v-model="form.diskon" :class="{ 'is-invalid': errors.diskon }">
+                                            <div class="invalid-feedback" v-if="errors.diskon">
+                                                {{ errors.diskon }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="nilaiDiskon" class="form-label">Nilai</label>
+                                            <input type="text" class="form-control" id="nilaiDiskon"
+                                                v-model="form.nilai" :class="{ 'is-invalid': errors.nilai }">
+                                            <div class="invalid-feedback" v-if="errors.nilai">
+                                                {{ errors.nilai }}
                                             </div>
                                         </div>
                                         <div class="modal-footer-btn">
                                             <button type="button" class="btn btn-warning me-2"
                                                 data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-secondary">Simpan Role</button>
+                                            <button type="submit" class="btn btn-secondary">Simpan Diskon</button>
                                         </div>
                                     </form>
                                 </div>
@@ -159,28 +177,36 @@
         </Teleport>
 
         <Teleport to="body">
-            <div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModal" aria-hidden="true"
-                data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal fade" id="editDiskonModal" tabindex="-1" aria-labelledby="editDiskonModal"
+                aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
                 <div class="modal-dialog modal-dialog-centered custom-modal-two">
                     <div class="modal-content">
                         <div class="page-wrapper-new p-0">
                             <div class="content">
                                 <div class="modal-header border-0 custom-modal-header">
                                     <div class="page-title">
-                                        <h4>EDIT ROLE</h4>
+                                        <h4>EDIT DISKON</h4>
                                     </div>
                                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body custom-modal-body">
-                                    <form @submit.prevent="handleEditRole">
+                                    <form @submit.prevent="handleEditDiskon">
                                         <div class="mb-3">
-                                            <label for="editNamaRole" class="form-label">Nama Role</label>
-                                            <input type="text" class="form-control" id="editNamaRole"
-                                                v-model="editForm.role" :class="{ 'is-invalid': editErrors.role }">
-                                            <div class="invalid-feedback" v-if="editErrors.role">
-                                                {{ editErrors.role }}
+                                            <label for="editNamaDiskon" class="form-label">Nama Diskon</label>
+                                            <input type="text" class="form-control" id="editNamaDiskon"
+                                                v-model="editForm.diskon" :class="{ 'is-invalid': editErrors.diskon }">
+                                            <div class="invalid-feedback" v-if="editErrors.diskon">
+                                                {{ editErrors.diskon }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="editNilaiDiskon" class="form-label">Nilai Diskon</label>
+                                            <input type="text" class="form-control" id="editNilaiDiskon"
+                                                v-model="editForm.nilai" :class="{ 'is-invalid': editErrors.nilai }">
+                                            <div class="invalid-feedback" v-if="editErrors.nilai">
+                                                {{ editErrors.nilai }}
                                             </div>
                                         </div>
                                         <div class="modal-footer-btn">
@@ -201,7 +227,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import feather from 'feather-icons';
-import { roleService } from '@/services/usermanagement/roleService';
+import { diskonService } from '@/services/produk/diskonService';
 import { showToast } from "@/utilities/toastfy";
 import { initTooltips } from '@/utilities/tooltip';
 import { Modal } from 'bootstrap';
@@ -216,22 +242,24 @@ const itemsPerPage = ref(5);
 const searchQuery = ref('');
 const isHeaderCollapsed = ref(false);
 const form = ref({
-    role: '',
+    diskon: '',
+    nilai: '',
 });
 const editForm = ref({
     id: null,
-    role: '',
+    diskon: '',
+    nilai: '',
 });
 const errors = ref({});
-const editErrors = ref({}); 
+const editErrors = ref({});
 
 // ===================================
 // LOGIKA UNTUK TAMBAH
 // ===================================
-// Fungsi fetch data role dari api
+// Fungsi fetch data diskon dari api
 const fetchDataFromApi = async () => {
     try {
-        const responseData = await roleService.getRole();
+        const responseData = await diskonService.getDiskon();
         allData.value = responseData.map(item => ({
             ...item,
             status_label: item.status === 1 ? 'Aktif' : 'Tidak Aktif',
@@ -245,14 +273,15 @@ const fetchDataFromApi = async () => {
 // Fungsi VALIDASI yang sudah diperbaiki agar bisa menerima argumen
 const validateForm = (formData, errorState) => {
     errorState.value = {}; // Reset error
-    if (!formData.role) {
-        errorState.value.role = "Nama Role tidak boleh kosong.";
+    if (!formData.diskon) {
+        errorState.value.diskon = "Nama diskon tidak boleh kosong.";
+        errorState.value.nilai = "Nilai tidak boleh kosong.";
     }
     return Object.keys(errorState.value).length === 0;
 };
 
 // Fungsi untuk submit form 'Tambah'
-const handleStoreRole = async () => {
+const handleStoreDiskon = async () => {
     // Panggil validateForm dan berikan form 'tambah' serta errors-nya
     if (!validateForm(form.value, errors)) {
         showToast("Ada kesalahan pada form. Silakan periksa kembali.", "error");
@@ -260,7 +289,7 @@ const handleStoreRole = async () => {
     }
 
     try {
-        const response = await roleService.storeRole({ role: form.value.role });
+        const response = await diskonService.storeDiskon({ diskon: form.value.diskon, nilai: form.value.nilai });
 
         if (response.success) {
             await fetchDataFromApi();
@@ -288,9 +317,10 @@ const handleStoreRole = async () => {
 };
 // Fungsi untuk submit form 'Reset Form'
 const resetForm = () => {
-    form.value.role = '';
+    form.value.diskon = '';
+    form.value.nilai = '';
     errors.value = {};
-    const modalElement = document.getElementById('tambahRoleModal');
+    const modalElement = document.getElementById('tambahDiskonModal');
     const modal = Modal.getInstance(modalElement);
     if (modal) {
         modal.hide();
@@ -303,15 +333,16 @@ const resetForm = () => {
 // Fungsi untuk open modal edit
 const openEditModal = (item) => {
     editForm.value.id = item.id;
-    editForm.value.role = item.role;
+    editForm.value.diskon = item.diskon;
+    editForm.value.nilai = item.nilai;
     editErrors.value = {}; // Reset error edit saat modal dibuka
-    const modalElement = document.getElementById('editRoleModal');
+    const modalElement = document.getElementById('editDiskonModal');
     const modal = new Modal(modalElement);
     modal.show();
 };
 
 // Fungsi untuk submit form 'Edit'
-const handleEditRole = async () => {
+const handleEditDiskon = async () => {
     // Panggil validateForm dan berikan form 'edit' dan errors-nya
     if (!validateForm(editForm.value, editErrors)) {
         showToast("Ada kesalahan pada form. Silakan periksa kembali.", "error");
@@ -319,14 +350,14 @@ const handleEditRole = async () => {
     }
 
     try {
-        const response = await roleService.updateRole(editForm.value.id, {
-            role: editForm.value.role
+        const response = await diskonService.updateDiskon(editForm.value.id, {
+            diskon: editForm.value.diskon, nilai: editForm.value.nilai
         });
 
         if (response.success) {
             await fetchDataFromApi();
             showToast(response.message, "success");
-            const modalElement = document.getElementById('editRoleModal');
+            const modalElement = document.getElementById('editDiskonModal');
             const modal = Modal.getInstance(modalElement);
             if (modal) {
                 modal.hide();
@@ -354,7 +385,7 @@ const handleEditRole = async () => {
 // LOGIKA UNTUK DELETE
 // ===================================
 // Fungsi untuk submit delete
-const handleDeleteRole = async (id) => {
+const handleDeleteDiskon = async (id) => {
     Swal.fire({
         title: "Apakah Anda Yakin?",
         text: "Anda tidak akan bisa mengembalikannya!",
@@ -366,11 +397,11 @@ const handleDeleteRole = async (id) => {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                const response = await roleService.deleteRole(id);
+                const response = await diskonService.deleteDiskon(id);
 
                 if (response.success) {
                     await fetchDataFromApi();
-                    showToast("Data role berhasil dihapus.", "success");
+                    showToast("Data diskon berhasil dihapus.", "success");
                 } else {
                     showToast("Gagal menghapus data.", "error");
                 }
@@ -382,14 +413,13 @@ const handleDeleteRole = async (id) => {
         }
     });
 };
-
 // ===================================
 // COMPUTED PROPERTI
 // ===================================
 const filteredData = computed(() => {
     if (!searchQuery.value) return allData.value;
     const query = searchQuery.value.toLowerCase();
-    return allData.value.filter(item => item.role.toLowerCase().includes(query));
+    return allData.value.filter(item => item.diskon.toLowerCase().includes(query));
 });
 const totalItems = computed(() => filteredData.value.length);
 const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
@@ -420,7 +450,7 @@ onMounted(() => {
     renderFeatherIcons();
     initTooltips(); // Panggil di sini
 
-    const modalElement = document.getElementById('tambahRoleModal');
+    const modalElement = document.getElementById('tambahDiskonModal');
     if (modalElement) {
         modalElement.addEventListener('hidden.bs.modal', resetForm);
     }

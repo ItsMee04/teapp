@@ -39,45 +39,28 @@
                                                 :class="{ 'active': $route.path === '/role' }">Role</router-link>
                                         </li>
                                         <li>
-                                            <router-link to="/user"
-                                                :class="{ 'active': $route.path === '/user' }">User Account</router-link>
+                                            <router-link to="/user" :class="{ 'active': $route.path === '/user' }">User
+                                                Account</router-link>
                                         </li>
                                     </ul>
                                 </li>
                                 <li class="submenu">
                                     <a href="javascript:void(0);"
-                                        :class="{ 'subdrop': openMenuId === 'application', 'active': activeMenuId === 'application' }"
-                                        @click.prevent="toggleSubmenu('application')">
-                                        <i data-feather="smartphone"></i>
-                                        <span>Application</span>
+                                        :class="{ 'subdrop': openMenuId === 'produk', 'active': activeMenuId === 'produk' }"
+                                        @click.prevent="toggleSubmenu('produk')">
+                                        <i data-feather="archive"></i>
+                                        <span>Produk</span>
                                         <span class="menu-arrow"></span>
                                     </a>
-                                    <ul :style="{ display: openMenuId === 'application' ? 'block' : 'none' }">
-                                        <li><router-link to="/chat.html"
-                                                :class="{ 'active': $route.path === '/chat.html' }">Chat</router-link>
+                                    <ul :style="{ display: openMenuId === 'produk' ? 'block' : 'none' }">
+                                        <li><router-link to="/kondisi"
+                                                :class="{ 'active': $route.path === '/kondisi' }">Kondisi</router-link>
                                         </li>
-                                        <li class="submenu submenu-two">
-                                            <a href="javascript:void(0);">
-                                                Call
-                                                <span class="menu-arrow inside-submenu"></span>
-                                            </a>
-                                            <ul>
-                                                <li><router-link to="/video-call.html"
-                                                        :class="{ 'active': $route.path === '/video-call.html' }">Video
-                                                        Call</router-link></li>
-                                                <li><router-link to="/audio-call.html"
-                                                        :class="{ 'active': $route.path === '/audio-call.html' }">Audio
-                                                        Call</router-link></li>
-                                                <li><router-link to="/call-history.html"
-                                                        :class="{ 'active': $route.path === '/call-history.html' }">Call
-                                                        History</router-link></li>
-                                            </ul>
+                                        <li><router-link to="/diskon"
+                                                :class="{ 'active': $route.path === '/diskon' }">Diskon / Promo</router-link>
                                         </li>
-                                        <li><router-link to="/calendar.html"
-                                                :class="{ 'active': $route.path === '/calendar.html' }">Calendar</router-link>
-                                        </li>
-                                        <li><router-link to="/email.html"
-                                                :class="{ 'active': $route.path === '/email.html' }">Email</router-link>
+                                        <li><router-link to="/jenisproduk"
+                                                :class="{ 'active': $route.path === '/jenisproduk' }">Jenis Produk</router-link>
                                         </li>
                                         <li><router-link to="/todo.html"
                                                 :class="{ 'active': $route.path === '/todo.html' }">To Do</router-link>
@@ -219,10 +202,10 @@ const submenuMapping = {
     '/role': 'usermanagement',
     '/user': 'usermanagement',
 
-    '/chat.html': 'application',
-    '/video-call.html': 'application',
-    '/audio-call.html': 'application',
-    '/call-history.html': 'application',
+    '/kondisi': 'produk',
+    '/diskon': 'produk',
+    '/jenisproduk': 'produk',
+
     '/calendar.html': 'application',
     '/email.html': 'application',
     '/todo.html': 'application',
