@@ -70,7 +70,7 @@ const router = createRouter({
           component: Diskon
         },
         {
-          path: '/jenis',
+          path: '/jenisproduk',
           name: 'jenis',
           component: Jenis
         },
