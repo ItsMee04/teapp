@@ -63,10 +63,10 @@
                                                 :class="{ 'active': $route.path === '/jenisproduk' }">Jenis Produk</router-link>
                                         </li>
                                         <li><router-link to="/produk"
-                                                :class="{ 'active': $route.path === '/produk' }"> Produk</router-link>
+                                                :class="{ 'active': $route.path === '/produk' }">Produk</router-link>
                                         </li>
-                                        <li><router-link to="/todo.html"
-                                                :class="{ 'active': $route.path === '/todo.html' }">To Do</router-link>
+                                        <li><router-link to="/nampan"
+                                                :class="{ 'active': $route.path === '/nampan' }">Nampan</router-link>
                                         </li>
                                         <li><router-link to="/notes.html"
                                                 :class="{ 'active': $route.path === '/notes.html' }">Notes</router-link>
@@ -209,6 +209,7 @@ const submenuMapping = {
     '/diskon': 'produk',
     '/jenisproduk': 'produk',
     '/produk': 'produk',
+    '/nampan': 'produk',
 
     '/calendar.html': 'application',
     '/email.html': 'application',

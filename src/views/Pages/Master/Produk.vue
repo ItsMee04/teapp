@@ -1114,7 +1114,7 @@ watch(isHeaderCollapsed, (newValue) => {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    background-color: #757575;
+    background-color: #fff;
     height: 100%;
     /* Memastikan kotak mengambil seluruh tinggi yang tersedia */
     display: flex;
