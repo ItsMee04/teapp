@@ -279,7 +279,7 @@
                                             <div class="phone-img mt-3"
                                                 style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px; border: 2px dashed #ccc; position: relative;">
                                                 <img v-if="imagePreviewUrl" :src="imagePreviewUrl" alt="previewImage"
-                                                    style="width: 100%; height: 100%; display: block; object-fit: cover;">
+                                                    style="width: 100%; height: 100%; display: block; object-fit: contain;">
                                                 <div v-else
                                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; text-align: center; color: #888; font-size: 14px; padding: 10px;">
                                                     <span class="text-center">Pratinjau Gambar</span>
@@ -437,7 +437,7 @@
                                             <div class="phone-img mt-3"
                                                 style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px; border: 2px dashed #ccc; position: relative;">
                                                 <img v-if="editImageUrl" :src="editImageUrl" alt="previewImage"
-                                                    style="width: 100%; height: 100%; display: block; object-fit: cover;">
+                                                    style="width: 100%; height: 100%; display: block; object-fit: contain;">
                                                 <div v-else
                                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; text-align: center; color: #888; font-size: 14px; padding: 10px;">
                                                     <span class="text-center">Pratinjau Gambar</span>
@@ -450,6 +450,106 @@
                                             <button type="submit" class="btn btn-secondary">Simpan Produk</button>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
+
+        <Teleport to="body">
+            <div class="modal fade" id="viewProdukModal" tabindex="-1" aria-labelledby="viewProdukModalLabel"
+                aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-xl modal-dialog-centered custom-modal-two">
+                    <div class="modal-content">
+                        <div class="page-wrapper-new p-0">
+                            <div class="content">
+                                <div class="modal-header border-0 custom-modal-header">
+                                    <div class="page-title">
+                                        <h4>VIEW PRODUK</h4>
+                                    </div>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <div class="row">
+                                        <div class="col-lg-8 col-sm-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="bar-code-view">
+                                                        <img :src="editForm.barcode_url" alt="barcode" width="100px">
+                                                        <a class="printimg">
+                                                            <img src="/src/assets/img/icons/printer.svg" alt="print">
+                                                        </a>
+                                                    </div>
+                                                    <div class="productdetails">
+                                                        <ul class="product-bar">
+                                                            <li>
+                                                                <h4>KODE PRODUK</h4>
+                                                                <h6>{{ editForm.kodeproduk }}</h6>
+                                                            </li>
+                                                            <li>
+                                                                <h4>JENIS PRODUK</h4>
+                                                                <h6>{{ editForm.jenis }}</h6>
+                                                            </li>
+                                                            <li>
+                                                                <h4>BERAT</h4>
+                                                                <h6>{{ editForm.berat }}</h6>
+                                                            </li>
+                                                            <li>
+                                                                <h4>KARAT</h4>
+                                                                <h6>{{ editForm.karat }}</h6>
+                                                            </li>
+                                                            <li>
+                                                                <h4>LINGKAR</h4>
+                                                                <h6>{{ editForm.lingkar }}</h6>
+                                                            </li>
+                                                            <li>
+                                                                <h4>PANJANG</h4>
+                                                                <h6>{{ editForm.panjang }}</h6>
+                                                            </li>
+                                                            <li>
+                                                                <h4>HARGA / GRAM</h4>
+                                                                <h6>{{ editForm.hargajual }}</h6>
+                                                            </li>
+                                                            <li>
+                                                                <h4>STATUS</h4>
+                                                                <h6 v-if="editForm.status === 1">
+                                                                    <span class="badge bg-success">In Stok</span>
+                                                                </h6>
+                                                                <h6 v-else>
+                                                                    <span class="badge bg-danger">Out Stok</span>
+                                                                </h6>
+                                                            </li>
+                                                            <li>
+                                                                <h4>KETERANGAN</h4>
+                                                                <h6>{{ editForm.keterangan }}</h6>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-sm-12">
+                                            <div class="product-box">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="slider-product-details">
+                                                            <div class="owl-carousel owl-theme product-slide">
+                                                                <div class="slider-product">
+                                                                    <img :src="editForm.existing_image_url" alt="img"
+                                                                        class="responsive-image">
+                                                                    <h4>{{ editForm.kodeproduk + '.png' }}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -877,6 +977,68 @@ const handleUpdateProduk = async () => {
 };
 
 // ===================================
+// LOGIKA DELETE
+// ===================================
+const handleDeleteProduk = async (id) => {
+    const result = await Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: 'Data yang dihapus tidak dapat dikembalikan!',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    });
+    if (result.isConfirmed) {
+        try {
+            await produkService.deleteProduk(id);
+            showToast('Data produk berhasil dihapus!', 'success');
+            fetchDataFromApi();
+        } catch (error) {
+            console.error('Gagal menghapus data produk:', error);
+            showToast('Terjadi kesalahan saat menghapus data produk.', 'error');
+        }
+    }
+};
+
+// ===================================
+// LOGIKA VIEW PRODUK
+// ===================================
+
+const openViewModal = (produk) => {
+    editForm.value.id = produk.id;
+    editForm.value.kodeproduk = produk.kodeproduk;
+    editForm.value.nama = produk.nama;
+    editForm.value.jenis = produk.jenisproduk.jenis_produk;
+    editForm.value.berat = produk.berat;
+    editForm.value.karat = produk.karat;
+    editForm.value.lingkar = produk.lingkar;
+    editForm.value.panjang = produk.panjang;
+    editForm.value.hargajual = produk.harga_jual;
+    editForm.value.hargabeli = produk.harga_beli;
+    editForm.value.keterangan = produk.keterangan;
+    editForm.value.status = produk.status;
+
+    // Set URL gambar yang sudah ada dari server
+    if (produk.image_produk) {
+        editForm.value.existing_image_url = `http://127.0.0.1:8000/storage/produk/${produk.image_produk}`;
+    } else {
+        editForm.value.existing_image_url = null;
+    }
+
+    // Membangun URL barcode
+    if (produk.kodeproduk) {
+        editForm.value.barcode_url = `http://127.0.0.1:8000/storage/barcode/${produk.kodeproduk}.png`;
+    } else {
+        editForm.value.barcode_url = null;
+    }
+
+    // Tampilkan modal edit
+    const modal = new Modal(document.getElementById('viewProdukModal'));
+    modal.show();
+};
+
+// ===================================
 // COMPUTED PROPERTI
 // ===================================
 const filteredData = computed(() => {
@@ -901,30 +1063,7 @@ const goToPage = (page) => {
 const prevPage = () => goToPage(currentPage.value - 1);
 const nextPage = () => goToPage(currentPage.value + 1);
 
-// ===================================
-// LOGIKA LAIN
-// ===================================
-const handleDeleteProduk = async (id) => {
-    const result = await Swal.fire({
-        title: 'Apakah Anda yakin?',
-        text: 'Data yang dihapus tidak dapat dikembalikan!',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
-    });
-    if (result.isConfirmed) {
-        try {
-            await produkService.deleteProduk(id);
-            showToast('Data produk berhasil dihapus!', 'success');
-            fetchDataFromApi();
-        } catch (error) {
-            console.error('Gagal menghapus data produk:', error);
-            showToast('Terjadi kesalahan saat menghapus data produk.', 'error');
-        }
-    }
-};
+
 
 // ===================================
 // LIFECYCLE HOOKS & WATCHER
@@ -967,3 +1106,48 @@ watch(isHeaderCollapsed, (newValue) => {
     }
 });
 </script>
+
+<style scoped>
+/* Menentukan gaya untuk kotak produk */
+.product-box {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background-color: #757575;
+    height: 100%;
+    /* Memastikan kotak mengambil seluruh tinggi yang tersedia */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Memastikan card mengambil seluruh tinggi kotak */
+.card {
+    border: none;
+    height: 100%;
+}
+
+.card-body {
+    height: 100%;
+}
+
+/* Memastikan gambar responsif di dalam kotak */
+.responsive-image {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Mengatur container agar gambar berada di tengah */
+.slider-product-details,
+.owl-carousel,
+.slider-product {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+</style>
