@@ -53,8 +53,8 @@ export const nampanService = {
      */
     async updateNampan(id, data) {
         try {
-            const response = await api.put(`/nampan/${id}`, data); // Menggunakan endpoint /api/nampan/{id}
-            return response.data.Data;
+            const response = await api.put(`/nampan/updateNampan/${id}`, data); // Menggunakan endpoint /api/nampan/{id}
+            return response.data;
         } catch (error) {
             console.error(`Error updating nampan with ID ${id}:`, error.response ? error.response.data : error.message);
             throw error;

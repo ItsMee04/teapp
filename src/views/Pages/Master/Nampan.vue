@@ -90,8 +90,8 @@
                                         <td class="action-table-data">
                                             <div class="edit-delete-action">
                                                 <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="tooltip"
-                                                    data-bs-target="#ViewModal" title="Edit"
-                                                    @click.prevent="openEditModal(item)">
+                                                    data-bs-target="#ViewModal" title="View"
+                                                    @click.prevent="openViewModal(item)">
                                                     <i data-feather="eye" class="action-eye"></i>
                                                 </a>
 
@@ -154,8 +154,8 @@
                                     <form @submit.prevent="handleStoreNampan">
                                         <div class="mb-3">
                                             <label for="namaNampan" class="form-label">Nampan / Baki</label>
-                                            <input type="text" class="form-control" id="namaNampan" v-model="form.nampan"
-                                                :class="{ 'is-invalid': errors.nampan }">
+                                            <input type="text" class="form-control" id="namaNampan"
+                                                v-model="form.nampan" :class="{ 'is-invalid': errors.nampan }">
                                             <div class="invalid-feedback" v-if="errors.nampan">
                                                 {{ errors.nampan }}
                                             </div>
@@ -172,6 +172,59 @@
                                             </div>
                                             <div class="invalid-feedback" v-if="errors.jenis">
                                                 {{ errors.jenis }}
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer-btn">
+                                            <button type="button" class="btn btn-warning me-2"
+                                                data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-secondary">Simpan Role</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
+
+        <Teleport to="body">
+            <div class="modal fade" id="editNampanModal" tabindex="-1" aria-labelledby="editNampanModalLabel"
+                aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered custom-modal-two">
+                    <div class="modal-content">
+                        <div class="page-wrapper-new p-0">
+                            <div class="content">
+                                <div class="modal-header border-0 custom-modal-header">
+                                    <div class="page-title">
+                                        <h4>EDIT NAMPAN</h4>
+                                    </div>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <form @submit.prevent="handleEditNampan">
+                                        <div class="mb-3">
+                                            <label for="namaNampan" class="form-label">Nampan / Baki</label>
+                                            <input type="text" class="form-control" id="namaNampan"
+                                                v-model="editForm.nampan" :class="{ 'is-invalid': editErrors.nampan }">
+                                            <div class="invalid-feedback" v-if="editErrors.nampan">
+                                                {{ editErrors.nampan }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Jenis<span
+                                                    class="text-danger ms-1">*</span></label>
+                                            <div :class="{ 'is-invalid': editErrors.jenis }">
+                                                <VueMultiselect v-model="editForm.jenis" :options="jenisList"
+                                                    :allow-empty="false" :preselect-first="true" :searchable="true"
+                                                    placeholder="Pilih Jenis" label="jenis_produk" track-by="id"
+                                                    :class="{ 'is-invalid': editErrors.jenis }">
+                                                </VueMultiselect>
+                                            </div>
+                                            <div class="invalid-feedback" v-if="editErrors.jenis">
+                                                {{ editErrors.jenis }}
                                             </div>
                                         </div>
                                         <div class="modal-footer-btn">
@@ -212,15 +265,15 @@ const searchQuery = ref('');
 const isHeaderCollapsed = ref(false);
 const form = ref({
     nampan: '',
-    jenis:'',
+    jenis: '',
 });
 const editForm = ref({
     id: null,
     nampan: '',
-    jenis:'',
+    jenis: '',
 });
 const errors = ref({});
-const editErrors = ref({}); 
+const editErrors = ref({});
 
 // ===================================
 // LOGIKA UNTUK TAMBAH
@@ -254,7 +307,7 @@ const resetForm = () => {
         jenis: null,
     };
     errors.value = {};
-    const modalElement = document.getElementById('tambahProdukModal');
+    const modalElement = document.getElementById('tambahNampanModal');
     if (modalElement) {
         const modal = Modal.getInstance(modalElement);
         if (modal) {
@@ -284,15 +337,10 @@ const handleStoreNampan = async () => {
     }
 
     try {
-        const response = await nampanService.storeNampan({ nampan: form.value.nampan, jenis: form.value.jenis});
-
-        if (response.success) {
-            await fetchDataFromApi();
-            showToast(response.message, "success");
-            resetForm(); // Panggil fungsi reset
-        } else {
-            showToast(response.message || 'Gagal menyimpan data.', "error");
-        }
+        const response = await nampanService.storeNampan({ nampan: form.value.nampan, jenis: form.value.jenis.id });
+        await fetchDataFromApi();
+        showToast("Data nampan berhasil ditambahkan!", "success");
+        resetForm(); // Panggil fungsi reset
 
     } catch (error) {
         console.log("Objek error yang diterima:", error);
@@ -312,12 +360,72 @@ const handleStoreNampan = async () => {
 };
 
 // ===================================
+// LOGIKA UNTUK EDIT
+// ===================================
+const openEditModal = (item) => {
+    // Mengisi form dengan data nampan yang dipilih
+    editForm.value.id = item.id;
+    editForm.value.nampan = item.nampan;
+    editForm.value.jenis = jenisList.value.find(c => c.id === item.jenis_produk.id);
+    // Reset error
+    editErrors.value = {};
+
+    const modalElement = document.getElementById('editNampanModal');
+    const modal = new Modal(modalElement);
+    modal.show();
+};
+
+// Fungsi untuk submit form 'Edit'
+const handleEditNampan = async () => {
+    // Panggil validateForm dan berikan form 'edit' dan errors-nya
+    if (!validateForm(editForm.value, editErrors)) {
+        showToast("Ada kesalahan pada form. Silakan periksa kembali.", "error");
+        return;
+    }
+
+    try {
+        const response = await nampanService.updateNampan(editForm.value.id, {
+            nampan: editForm.value.nampan, jenis: editForm.value.jenis.id
+        });
+
+        if (response.success == true) {
+            await fetchDataFromApi();
+            showToast(response.message, "success");
+            const modalElement = document.getElementById('editNampanModal');
+            const modal = Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+        } else {
+            showToast(response.message || 'Gagal memperbarui data.', "error");
+        }
+    } catch (error) {
+        console.log("Objek error yang diterima:", error);
+        let errorMessage = 'Terjadi kesalahan saat menyimpan perubahan.';
+        if (error.response) {
+            if (error.response.data && error.response.data.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.response.data) {
+                errorMessage = "Terjadi kesalahan pada form.";
+            }
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        showToast(errorMessage, "error");
+    }
+};
+
+
+// ===================================
 // COMPUTED PROPERTI
 // ===================================
 const filteredData = computed(() => {
     if (!searchQuery.value) return allData.value;
     const query = searchQuery.value.toLowerCase();
-    return allData.value.filter(item => item.nampan.toLowerCase().includes(query));
+
+    return allData.value.filter(item =>
+        item.nampan.toLowerCase().includes(query) || item.jenis_produk.jenis_produk.toLowerCase().includes(query)
+    );
 });
 const totalItems = computed(() => filteredData.value.length);
 const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));

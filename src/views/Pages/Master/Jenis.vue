@@ -191,7 +191,7 @@
                                     <div class="page-title">
                                         <h4>EDIT JENIS PRODUK</h4>
                                     </div>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="close" @click="closeEditModal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
