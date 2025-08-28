@@ -77,7 +77,7 @@
                                             <div class="d-flex align-items-center">
                                                 <div>
                                                     <div class="lh-1">
-                                                        <span>{{ item.jenis }}</span>
+                                                        <span>{{ item.jenis_produk.jenis_produk }}</span>
                                                     </div>
                                                 </div>
                                             </div>
