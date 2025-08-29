@@ -28,129 +28,245 @@
                         </a>
                     </li>
                 </ul>
+                <div class="page-btn import">
+                    <a href="#" class="btn btn-added color" data-bs-toggle="modal" data-bs-target="#tambahProdukModal"
+                        @click.prevent="openTambahProdukModal">
+                        <i data-feather="plus-circle" class="me-2"></i>
+                        Tambah Produk
+                    </a>
+                </div>
             </div>
             <div class="row">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="grid-showcase mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="settings-wrapper d-flex">
-                                        <div class="sidebars settings-sidebar border p-3 rounded">
-                                            <div class="sidebar-inner">
-                                                <h6>Data Nampan / Baki</h6>
+                <div class="col-3">
+                    <div class="card settings-sidebar border p-3 rounded h-100">
+                        <div class="sidebar-inner">
+                            <h6>Data Nampan / Baki</h6>
 
-                                                <ul class="list-group mt-2 mb-2" style="max-height: 400px; overflow-y: auto;">
-                                                    <li v-if="isLoadingNampan"
-                                                        class="list-group-item text-center text-muted d-flex align-items-center justify-content-center"
-                                                        style="height: 400px;">
-                                                        <div class="d-flex flex-column align-items-center">
-                                                            <div class="spinner-border spinner-border-sm me-2"
-                                                                role="status"></div>
-                                                            <span>Memuat...</span>
-                                                        </div>
-                                                    </li>
-                                                    <li v-else-if="paginatedNampanList.length === 0"
-                                                        class="list-group-item text-center text-muted d-flex align-items-center justify-content-center"
-                                                        style="height: 400px;">
-                                                        <span>Tidak ada data nampan.</span>
-                                                    </li>
-                                                    <li v-else v-for="nampan in paginatedNampanList" :key="nampan.id"
-                                                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                                                        :class="{ 'active': selectedNampanId === nampan.id }"
-                                                        @click="fetchNampanProduk(nampan.id)">
-                                                        {{ nampan.nama }}
-                                                        <span class="badge rounded-pill"
-                                                            :class="{ 'bg-primary': selectedNampanId !== nampan.id, 'bg-warning': selectedNampanId === nampan.id }">
-                                                            {{ nampan.jumlah_produk }}
-                                                        </span>
-                                                    </li>
-                                                </ul>
-
-                                                <nav v-if="totalNampanPages > 1" aria-label="Page navigation">
-                                                    <ul class="pagination justify-content-center mb-0 mt-3">
-                                                        <li class="page-item"
-                                                            :class="{ 'disabled': currentPage === 1 }">
-                                                            <a class="page-link" href="#"
-                                                                @click.prevent="goToNampanPage(currentPage - 1)">Previous</a>
-                                                        </li>
-                                                        <li class="page-item" v-for="page in totalNampanPages"
-                                                            :key="page" :class="{ 'active': currentPage === page }">
-                                                            <a class="page-link" href="#"
-                                                                @click.prevent="goToNampanPage(page)">{{ page }}</a>
-                                                        </li>
-                                                        <li class="page-item"
-                                                            :class="{ 'disabled': currentPage === totalNampanPages }">
-                                                            <a class="page-link" href="#"
-                                                                @click.prevent="goToNampanPage(currentPage + 1)">Next</a>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
-                                        </div>
+                            <ul class="list-group mt-2 mb-2" style="max-height: 400px; overflow-y: auto;">
+                                <li v-if="isLoadingNampan"
+                                    class="list-group-item text-center text-muted d-flex align-items-center justify-content-center"
+                                    style="height: 400px;">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <div class="spinner-border text-secondary" role="status"></div>
+                                        <span>Memuat...</span>
                                     </div>
+                                </li>
+                                <li v-else-if="paginatedNampanList.length === 0"
+                                    class="list-group-item text-center text-muted d-flex align-items-center justify-content-center"
+                                    style="height: 400px;">
+                                    <span>Tidak ada data nampan.</span>
+                                </li>
+                                <li v-else v-for="nampan in paginatedNampanList" :key="nampan.id"
+                                    class="list-group-item list-group-item-action"
+                                    :class="{ 'active': selectedNampanId === nampan.id }"
+                                    @click="fetchNampanProduk(nampan.id, nampan.nampan)">
+                                    <div>
+                                        <strong>{{ nampan.nampan }}</strong>
+                                        <small class="text-muted d-block">Tanggal: {{ nampan.tanggal }}</small>
+                                        <small class="text-muted d-block">Jenis: {{ nampan.jenis_produk.jenis_produk
+                                            }}</small>
+                                    </div>
+                                    <span class="badge rounded-pill"
+                                        :class="{ 'bg-primary': selectedNampanId !== nampan.id, 'bg-warning': selectedNampanId === nampan.id }">
+                                        {{ nampan.produk_count }}
+                                    </span>
+                                </li>
+                            </ul>
+                            <nav v-if="totalNampanPages > 1" aria-label="Page navigation">
+                                <ul class="pagination justify-content-center mb-0 mt-3">
+                                    <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
+                                        <a class="page-link" href="#"
+                                            @click.prevent="goToNampanPage(currentPage - 1)">Previous</a>
+                                    </li>
+                                    <li class="page-item" v-for="page in totalNampanPages" :key="page"
+                                        :class="{ 'active': currentPage === page }">
+                                        <a class="page-link" href="#" @click.prevent="goToNampanPage(page)">{{ page
+                                            }}</a>
+                                    </li>
+                                    <li class="page-item" :class="{ 'disabled': currentPage === totalNampanPages }">
+                                        <a class="page-link" href="#"
+                                            @click.prevent="goToNampanPage(currentPage + 1)">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col 8">
+                    <div class="card h-100">
+                        <div class="card-header justify-content-between">
+                            <div class="card-title">
+                                Daftar Produk di Nampan
+                                <span v-if="selectedNampanName">({{ selectedNampanName }})</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table text-nowrap table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Nama Produk</th>
+                                            <th>Harga</th>
+                                            <th>Jumlah</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-if="isLoadingProduk">
+                                            <td colspan="5" class="text-center">
+                                                <div class="spinner-border text-secondary" role="status"></div>
+                                                Memuat produk...
+                                            </td>
+                                        </tr>
+                                        <tr v-else-if="nampanProdukList.length === 0 && !selectedNampanId">
+                                            <td colspan="5" class="text-center">
+                                                Pilih nampan dari daftar di sisi kiri.
+                                            </td>
+                                        </tr>
+                                        <tr v-else-if="nampanProdukList.length === 0 && selectedNampanId">
+                                            <td colspan="5" class="text-center">
+                                                Tidak ada produk di nampan ini.
+                                            </td>
+                                        </tr>
+                                        <tr v-else v-for="(produk, index) in nampanProdukList" :key="produk.id">
+                                            <td>{{ index + 1 }}</td>
+                                            <td>{{ produk.nama }}</td>
+                                            <td>{{ formatRupiah(produk.harga) }}</td>
+                                            <td>{{ produk.jumlah }}</td>
+                                            <td class="action-table-data">
+                                                <div class="edit-delete-action">
+                                                    <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="tooltip"
+                                                        data-bs-target="#editPegawaiModal" title="Edit"
+                                                        @click.prevent="openEditModal(produk)">
+                                                        <i data-feather="edit" class="feather-edit"></i>
+                                                    </a>
+                                                    <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Hapus"
+                                                        @click.prevent="handleDeleteProduk(produk.id)">
+                                                        <i data-feather="trash-2" class="feather-trash-2"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav v-if="totalPages > 1" aria-label="Page navigation">
+                                <ul class="pagination justify-content-center mt-3">
+                                    <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                                        <a class="page-link" href="#"
+                                            @click.prevent="changePage(currentPage - 1)">Previous</a>
+                                    </li>
+                                    <li class="page-item" v-for="page in totalPages" :key="page"
+                                        :class="{ active: currentPage === page }">
+                                        <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                                    </li>
+                                    <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                                        <a class="page-link" href="#"
+                                            @click.prevent="changePage(currentPage + 1)">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <Teleport to="body">
+            <div class="modal fade" id="tambahProdukModal" tabindex="-1" aria-labelledby="tambahProdukModalLabel"
+                aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-xl modal-dialog-centered custom-modal-two">
+                    <div class="modal-content">
+                        <div class="page-wrapper-new p-0">
+                            <div class="content">
+                                <div class="modal-header border-0 custom-modal-header">
+                                    <div class="page-title">
+                                        <h4>TAMBAH PRODUK</h4>
+                                    </div>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
-
-                                <div class="col-8">
-                                    <div class="settings-page-wrap">
-                                        <div class="card">
-                                            <div class="card-header justify-content-between">
-                                                <div class="card-title">
-                                                    Daftar Produk di Nampan
-                                                    <span v-if="selectedNampanName">({{ selectedNampanName }})</span>
-                                                </div>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table text-nowrap table-striped table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>No.</th>
-                                                                <th>Nama Produk</th>
-                                                                <th>Harga</th>
-                                                                <th>Jumlah</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-if="isLoadingProduk">
-                                                                <td colspan="4" class="text-center">
-                                                                    <div class="spinner-border spinner-border-sm me-2"
-                                                                        role="status"></div>
-                                                                    Memuat produk...
-                                                                </td>
-                                                            </tr>
-                                                            <tr v-else-if="nampanProdukList.length === 0">
-                                                                <td colspan="4" class="text-center">
-                                                                    Pilih nampan dari daftar di sisi kiri.
-                                                                </td>
-                                                            </tr>
-                                                            <tr v-else v-for="(produk, index) in nampanProdukList"
-                                                                :key="produk.id">
-                                                                <td>{{ index + 1 }}</td>
-                                                                <td>{{ produk.nama }}</td>
-                                                                <td>Rp{{ formatRupiah(produk.harga) }}</td>
-                                                                <td>{{ produk.jumlah }}</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                <div class="modal-body custom-modal-body">
+                                    <form @submit.prevent="handleStoreNampan">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group mb-3">
+                                                    <input type="text" class="form-control"
+                                                        placeholder="Cari berdasarkan Kode Produk..."
+                                                        v-model="searchQuery">
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                        <div class="table-responsive">
+                                            <table class="table text-nowrap table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No.</th>
+                                                        <th>Kode Produk</th>
+                                                        <th>Berat</th>
+                                                        <th>Karat</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-if="isLoadingModalProduk">
+                                                        <td colspan="5" class="text-center">
+                                                            <div class="spinner-border text-secondary" role="status">
+                                                            </div>
+                                                            Memuat produk...
+                                                        </td>
+                                                    </tr>
+                                                    <tr v-else-if="modalProdukList.length === 0">
+                                                        <td colspan="5" class="text-center">
+                                                            Tidak ada produk yang tersedia.
+                                                        </td>
+                                                    </tr>
+                                                    <tr v-else v-for="(produkModal, index) in filteredProdukList"
+                                                        :key="produkModal.id">
+                                                        <td>{{ index + 1 }}</td>
+                                                        <td>{{ produkModal.kodeproduk }}</td>
+                                                        <td>{{ produkModal.berat }}</td>
+                                                        <td>{{ produkModal.karat }}</td>
+                                                        <td class="action-table-data">
+                                                            <div class="edit-delete-action">
+                                                                <a class="confirm-text p-2" data-bs-toggle="tooltip"
+                                                                    title="Pilih"
+                                                                    @click.prevent="handleSelectProduk(produkModal.id)">
+                                                                    <i data-feather="check"
+                                                                        class="feather-check text-success"></i>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer-btn">
+                                            <button type="button" class="btn btn-warning me-2"
+                                                data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-secondary">Tambah Produk</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Teleport>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import feather from 'feather-icons';
+import { nampanService } from '@/services/produk/nampanService';
 import { showToast } from "@/utilities/toastfy";
+import { nampanprodukService } from '@/services/produk/nampanprodukService';
+import { produkService } from '@/services/produk/produkService'; // Layanan baru untuk produk
 
 // STATE
 const nampanList = ref([]);
@@ -159,38 +275,15 @@ const currentPage = ref(1);
 const itemsPerPage = ref(5);
 const selectedNampanId = ref(null);
 const selectedNampanName = ref(null);
-const newNampanName = ref('');
+const selectedJenisProdukId = ref(null);
 const isLoadingNampan = ref(false);
 const isLoadingProduk = ref(false);
-const isCreating = ref(false);
+const isHeaderCollapsed = ref(false);
+const searchQuery = ref('');
 
-// STATIC DATA
-const staticNampanData = [
-    { id: 1, nama: 'Nampan A1', jumlah_produk: 12 },
-    { id: 2, nama: 'Nampan B2', jumlah_produk: 8 },
-    { id: 3, nama: 'Nampan C3', jumlah_produk: 25 },
-    { id: 4, nama: 'Nampan D4', jumlah_produk: 15 },
-    { id: 5, nama: 'Nampan E5', jumlah_produk: 20 },
-    { id: 6, nama: 'Nampan F6', jumlah_produk: 5 },
-    { id: 7, nama: 'Nampan G7', jumlah_produk: 18 },
-    { id: 8, nama: 'Nampan H8', jumlah_produk: 9 },
-    { id: 9, nama: 'Nampan I9', jumlah_produk: 30 },
-];
-
-const staticProdukData = [
-    { id: 101, nampanId: 1, nama: 'Produk Emas A', harga: 1500000, jumlah: 2 },
-    { id: 102, nampanId: 1, nama: 'Produk Perak B', harga: 500000, jumlah: 10 },
-    { id: 103, nampanId: 2, nama: 'Produk Emas C', harga: 2100000, jumlah: 5 },
-    { id: 104, nampanId: 2, nama: 'Produk Emas D', harga: 1800000, jumlah: 3 },
-    { id: 105, nampanId: 3, nama: 'Produk Perhiasan E', harga: 750000, jumlah: 25 },
-    { id: 106, nampanId: 4, nama: 'Produk Berlian F', harga: 5000000, jumlah: 10 },
-    { id: 107, nampanId: 4, nama: 'Produk Jam Tangan G', harga: 1200000, jumlah: 5 },
-    { id: 108, nampanId: 5, nama: 'Produk Cincin H', harga: 3000000, jumlah: 20 },
-    { id: 109, nampanId: 6, nama: 'Produk Kalung I', harga: 800000, jumlah: 5 },
-    { id: 110, nampanId: 7, nama: 'Produk Anting J', harga: 600000, jumlah: 18 },
-    { id: 111, nampanId: 8, nama: 'Produk Gelang K', harga: 950000, jumlah: 9 },
-    { id: 112, nampanId: 9, nama: 'Produk Emas L', harga: 1900000, jumlah: 30 },
-];
+// Modal State
+const modalProdukList = ref([]);
+const isLoadingModalProduk = ref(false);
 
 // COMPUTED UNTUK PAGINATION NAMPAN
 const totalNampanItems = computed(() => nampanList.value.length);
@@ -198,55 +291,96 @@ const totalNampanPages = computed(() => Math.ceil(totalNampanItems.value / items
 const startNampanIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value);
 const paginatedNampanList = computed(() => nampanList.value.slice(startNampanIndex.value, startNampanIndex.value + itemsPerPage.value));
 
+// COMPUTED UNTUK PAGINATION PRODUK
+const paginatedProdukList = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return nampanProdukList.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+    return Math.ceil(nampanProdukList.value.length / itemsPerPage.value);
+});
+
+const filteredProdukList = computed(() => {
+    if (!searchQuery.value) {
+        return modalProdukList.value;
+    }
+    const query = searchQuery.value.toLowerCase();
+    return modalProdukList.value.filter(produk => {
+        return produk.kodeproduk.toLowerCase().includes(query);
+    });
+});
+
 // METHODS
-const fetchDataFromApi = () => {
-  // Method ini tidak melakukan apa-apa karena data statis
-  console.log('Fetching data from API is disabled. Using static data instead.');
+const fetchDataFromApi = async () => {
+    await fetchNampanList();
 };
 
-const fetchNampanList = () => {
+const fetchNampanList = async () => {
     isLoadingNampan.value = true;
-    // Simulasi loading dengan setTimeout
-    setTimeout(() => {
-        nampanList.value = staticNampanData;
+    try {
+        const response = await nampanService.getNampan();
+        nampanList.value = response;
         if (nampanList.value.length > 0) {
-            fetchNampanProduk(nampanList.value[0].id);
+            await fetchNampanProduk(nampanList.value[0].id, nampanList.value[0].nampan);
+        } else {
+            nampanProdukList.value = [];
         }
+    } catch (error) {
+        console.error('Gagal mengambil daftar nampan:', error);
+        showToast('Gagal memuat data nampan. Silakan coba lagi.', 'error');
+        nampanList.value = [];
+    } finally {
         isLoadingNampan.value = false;
-    }, 500); // Penundaan 500ms untuk mensimulasikan panggilan API
+    }
 };
 
-const fetchNampanProduk = (nampanId) => {
+const fetchNampanProduk = async (nampanId, nampanName) => {
     selectedNampanId.value = nampanId;
+    selectedNampanName.value = nampanName;
+    // Simpan jenis_produk_id untuk digunakan di modal
+    const nampan = nampanList.value.find(n => n.id === nampanId);
+    if (nampan) {
+        selectedJenisProdukId.value = nampan.id;
+    }
+
     isLoadingProduk.value = true;
-    setTimeout(() => {
-        nampanProdukList.value = staticProdukData.filter(produk => produk.nampanId === nampanId);
-        const selected = nampanList.value.find(n => n.id === nampanId);
-        selectedNampanName.value = selected ? selected.nama : 'Tidak diketahui';
+    try {
+        const response = await nampanprodukService.getNampanProduk(nampanId);
+        nampanProdukList.value = response.Data || [];
+    } catch (error) {
+        console.error('Gagal mengambil produk untuk nampan:', error);
+        showToast('Gagal memuat produk untuk nampan ini.', 'error');
+        nampanProdukList.value = [];
+    } finally {
         isLoadingProduk.value = false;
-    }, 500); // Penundaan 500ms untuk mensimulasikan panggilan API
+    }
+};
+
+const fetchProdukModal = async () => {
+    if (!selectedJenisProdukId.value) {
+        showToast('Silakan pilih nampan terlebih dahulu.', 'warning');
+        return;
+    }
+
+    isLoadingModalProduk.value = true;
+    try {
+        const response = await nampanprodukService.getProduk(selectedJenisProdukId.value);
+        modalProdukList.value = response.Data || [];
+    } catch (error) {
+        console.error('Gagal mengambil produk untuk modal:', error);
+        showToast('Gagal memuat produk untuk modal.', 'error');
+        modalProdukList.value = [];
+    } finally {
+        isLoadingModalProduk.value = false;
+    }
 };
 
 const goToNampanPage = (page) => {
     if (page >= 1 && page <= totalNampanPages.value) {
         currentPage.value = page;
     }
-};
-
-const createNampan = () => {
-    if (!newNampanName.value.trim()) {
-        showToast('Nama nampan tidak boleh kosong.', 'warning');
-        return;
-    }
-    isCreating.value = true;
-    setTimeout(() => {
-        const newId = nampanList.value.length > 0 ? Math.max(...nampanList.value.map(n => n.id)) + 1 : 1;
-        const newNampan = { id: newId, nama: newNampanName.value, jumlah_produk: 0 };
-        nampanList.value.push(newNampan);
-        showToast('Nampan berhasil dibuat.', 'success');
-        newNampanName.value = '';
-        isCreating.value = false;
-    }, 500);
 };
 
 const formatRupiah = (value) => {
@@ -257,14 +391,76 @@ const formatRupiah = (value) => {
     }).format(value);
 };
 
-// LIFECYCLE HOOKS
+const openEditModal = (item) => {
+    console.log('Open edit modal for item:', item);
+};
+
+const handleDeleteProduk = (id) => {
+    console.log('Handle delete for product ID:', id);
+};
+
+const handleSelectProduk = (produkId) => {
+    console.log('Selected product with ID:', produkId);
+    // Tambahkan logika di sini untuk menambahkan produk ke nampan
+};
+
+const toggleHeaderCollapse = () => isHeaderCollapsed.value = !isHeaderCollapsed.value;
+
+const openTambahProdukModal = () => {
+    if (!selectedNampanId.value) {
+        showToast('Silakan pilih nampan terlebih dahulu.', 'warning');
+        return;
+    }
+    // Jika nampan sudah dipilih, panggil fungsi untuk memuat data modal
+    fetchProdukModal();
+};
+
 onMounted(() => {
     fetchNampanList();
     feather.replace();
 });
 
-// WATCHERS
 watch(paginatedNampanList, () => {
     feather.replace();
 });
+
+watch(isHeaderCollapsed, (newValue) => {
+    if (newValue) {
+        document.body.classList.add('header-collapse');
+    } else {
+        document.body.classList.remove('header-collapse');
+    }
+});
 </script>
+
+<style scoped>
+/* CSS tambahan untuk tampilan lebih rapi */
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.grid-showcase.d-flex {
+    gap: 1.5rem;
+}
+
+.list-group-item.active {
+    z-index: 2;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.list-group-item.active .text-muted {
+    color: #e9ecef !important;
+}
+
+.badge {
+    background-color: #007bff;
+}
+
+.list-group-item.active .badge {
+    background-color: #ffc107 !important;
+}
+</style>

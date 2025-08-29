@@ -219,6 +219,8 @@ const submenuMapping = {
     '/produk': 'produk',
     '/nampan': 'produk',
 
+    '/nampanproduk': 'nampan',
+
     '/calendar.html': 'application',
     '/email.html': 'application',
     '/todo.html': 'application',
