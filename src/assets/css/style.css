@@ -24227,7 +24227,17 @@ table tbody td.action-table-data a {
   padding: 8px;
 }
 table tbody td.action-table-data a .feather-edit {
-  color: #3577f1;
+  color: #17A2B8;
+  width: 14px;
+  height: 14px;
+}
+table tbody td.action-table-data a .feather-print {
+  color: #29344A ;
+  width: 14px;
+  height: 14px;
+}
+table tbody td.action-table-data a .feather-check {
+  color: #34A835 ;
   width: 14px;
   height: 14px;
 }
@@ -24986,6 +24996,18 @@ table tbody td.action-table-data a.cancel-circle:hover svg {
   border-color: #FF0000;
 }
 .edit-delete-action a.edit-icon:hover {
+  background-color: #17A2B8;
+  border-color: #17A2B8;
+}
+.edit-delete-action a.print-icon:hover {
+  background-color: #29344A;
+  border-color: #29344A;
+}
+.edit-delete-action a.check-icon:hover {
+  background-color: #28C76F;
+  border-color: #28C76F;
+}
+.edit-delete-action a.view-icon:hover {
   background-color: #092C4C;
   border-color: #092C4C;
 }
@@ -28733,7 +28755,13 @@ textarea {
   -ms-flex-pack: center;
 }
 .bank-action-btn a svg.feather-edit {
-  color: #3577f1;
+  color: #9B3042;
+}
+.bank-action-btn a svg.feather-print {
+  color: #29344A ;
+}
+.bank-action-btn a svg.feather-check {
+  color: #28C76F ;
 }
 .bank-action-btn a svg.feather-trash-2 {
   color: #FF0000;

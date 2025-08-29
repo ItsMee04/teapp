@@ -414,9 +414,10 @@ const fetchDataFromApi = async () => {
         const responseData = await pegawaiService.getPegawai();
         allData.value = responseData.map(item => ({
             ...item,
-            image: item.image_produk
-                ? `http://127.0.0.1:8000/storage/avatar/${item.image_produk}?t=${new Date().getTime()}`
+            image: item.image_pegawai // ✅ Corrected property name
+                ? `http://127.0.0.1:8000/storage/avatar/${item.image_pegawai}?t=${new Date().getTime()}`
                 : '/src/assets/img/avatar/avatar-1.jpg',
+
             status_label: item.status === 1 ? 'Aktif' : 'Tidak Aktif',
             status_class: item.status === 1 ? 'bg-soft-success' : 'bg-soft-danger'
         }));

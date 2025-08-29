@@ -90,20 +90,9 @@
                                         <td class="action-table-data">
                                             <div class="edit-delete-action">
                                                 <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="tooltip"
-                                                    data-bs-target="#ViewModal" title="View"
-                                                    @click.prevent="openViewModal(item)">
-                                                    <i data-feather="eye" class="action-eye"></i>
-                                                </a>
-
-                                                <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="tooltip"
                                                     data-bs-target="#editModal" title="Edit"
                                                     @click.prevent="openEditModal(item)">
                                                     <i data-feather="edit" class="feather-edit"></i>
-                                                </a>
-
-                                                <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Hapus"
-                                                    @click.prevent="handleDeleteRole(item.id)">
-                                                    <i data-feather="trash-2" class="feather-trash-2"></i>
                                                 </a>
                                             </div>
                                         </td>
@@ -177,7 +166,7 @@
                                         <div class="modal-footer-btn">
                                             <button type="button" class="btn btn-warning me-2"
                                                 data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-secondary">Simpan Role</button>
+                                            <button type="submit" class="btn btn-secondary">Simpan Nampan</button>
                                         </div>
                                     </form>
                                 </div>
@@ -230,7 +219,7 @@
                                         <div class="modal-footer-btn">
                                             <button type="button" class="btn btn-warning me-2"
                                                 data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-secondary">Simpan Role</button>
+                                            <button type="submit" class="btn btn-secondary">Simpan Nampan</button>
                                         </div>
                                     </form>
                                 </div>

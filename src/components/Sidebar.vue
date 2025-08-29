@@ -68,12 +68,20 @@
                                         <li><router-link to="/nampan"
                                                 :class="{ 'active': $route.path === '/nampan' }">Nampan</router-link>
                                         </li>
-                                        <li><router-link to="/notes.html"
-                                                :class="{ 'active': $route.path === '/notes.html' }">Notes</router-link>
+                                    </ul>
+                                </li>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"
+                                        :class="{ 'subdrop': openMenuId === 'nampan', 'active': activeMenuId === 'nampan' }"
+                                        @click.prevent="toggleSubmenu('nampan')">
+                                        <i data-feather="archive"></i>
+                                        <span>Nampan</span>
+                                        <span class="menu-arrow"></span>
+                                    </a>
+                                    <ul :style="{ display: openMenuId === 'nampan' ? 'block' : 'none' }">
+                                        <li><router-link to="/nampanproduk"
+                                                :class="{ 'active': $route.path === '/nampanproduk' }">Nampan Produk</router-link>
                                         </li>
-                                        <li><router-link to="/file-manager.html"
-                                                :class="{ 'active': $route.path === '/file-manager.html' }">File
-                                                Manager</router-link></li>
                                     </ul>
                                 </li>
                             </ul>
