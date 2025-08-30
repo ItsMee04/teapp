@@ -39,6 +39,14 @@
             <div class="row">
                 <div class="col-12 col-md-4 mb-3">
                     <div class="card settings-sidebar border p-3 rounded h-100">
+                        <div class="card-title mb-3">
+                            <div class="search-set">
+                                <div class="search-input">
+                                    <input type="text" class="form-control" placeholder="Cari Nampan ..."
+                                        v-model="searchQueryNampan">
+                                </div>
+                            </div>
+                        </div>
                         <div class="sidebar-inner">
                             <h6>Data Nampan / Baki</h6>
                             <ul class="list-group mt-2 mb-2" style="height: 400px; overflow-y: auto;">
@@ -63,28 +71,29 @@
                                         <strong>{{ nampan.nampan }}</strong>
                                         <small class="text-muted d-block">Tanggal: {{ nampan.tanggal }}</small>
                                         <small class="text-muted d-block">Jenis: {{ nampan.jenis_produk.jenis_produk
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                     <span class="badge rounded-pill"
-                                        :class="{ 'bg-primary': selectedNampanId !== nampan.id, 'bg-warning': selectedNampanId === nampan.id }">
+                                        :class="{ 'bg-secondary': selectedNampanId !== nampan.id, 'bg-warning': selectedNampanId === nampan.id }">
                                         {{ nampan.produk_count }}
                                     </span>
                                 </li>
                             </ul>
                             <nav v-if="totalNampanPages > 1" aria-label="Page navigation">
                                 <ul class="pagination justify-content-center mb-0 mt-3">
-                                    <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
+                                    <li class="page-item" :class="{ 'disabled': currentPageNampan === 1 }">
                                         <a class="page-link" href="#"
-                                            @click.prevent="goToNampanPage(currentPage - 1)">Previous</a>
+                                            @click.prevent="goToNampanPage(currentPageNampan - 1)">Previous</a>
                                     </li>
                                     <li class="page-item" v-for="page in totalNampanPages" :key="page"
-                                        :class="{ 'active': currentPage === page }">
+                                        :class="{ 'active': currentPageNampan === page }">
                                         <a class="page-link" href="#" @click.prevent="goToNampanPage(page)">{{ page
-                                            }}</a>
+                                        }}</a>
                                     </li>
-                                    <li class="page-item" :class="{ 'disabled': currentPage === totalNampanPages }">
+                                    <li class="page-item"
+                                        :class="{ 'disabled': currentPageNampan === totalNampanPages }">
                                         <a class="page-link" href="#"
-                                            @click.prevent="goToNampanPage(currentPage + 1)">Next</a>
+                                            @click.prevent="goToNampanPage(currentPageNampan + 1)">Next</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -106,20 +115,20 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Nama Produk</th>
-                                            <th>Harga</th>
-                                            <th>Jumlah</th>
+                                            <th>Kode Produk</th>
+                                            <th>Jenis</th>
+                                            <th>Tanggal</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-if="isLoadingProduk">
-                                            <td colspan="6" class="text-center">
+                                            <td colspan="5" class="text-center">
                                                 Memuat produk...
                                             </td>
                                         </tr>
                                         <tr v-else-if="nampanProdukList.length === 0 && !selectedNampanId">
-                                            <td colspan="6" class="text-center">
+                                            <td colspan="5" class="text-center">
                                                 <div class="alert alert-danger d-flex align-items-center" role="alert">
                                                     <i class="feather-alert-octagon flex-shrink-0 me-2"></i>
                                                     <div>
@@ -129,7 +138,7 @@
                                             </td>
                                         </tr>
                                         <tr v-else-if="nampanProdukList.length === 0 && selectedNampanId">
-                                            <td colspan="6" class="text-center">
+                                            <td colspan="5" class="text-center">
                                                 <div class="alert alert-danger d-flex align-items-center" role="alert">
                                                     <i class="feather-alert-octagon flex-shrink-0 me-2"></i>
                                                     <div>
@@ -138,21 +147,24 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <tr v-else v-for="(produk, index) in nampanProdukList" :key="produk.id">
+                                        <tr v-else v-for="(item, index) in paginatedProdukList" :key="item.id">
                                             <td>{{ index + 1 }}</td>
-                                            <td>{{ produk.nama }}</td>
-                                            <td>{{ formatRupiah(produk.harga) }}</td>
-                                            <td>{{ produk.jumlah }}</td>
+                                            <td>{{ item.produk.kodeproduk }}</td>
+                                            <td>
+                                                <span class="badge" :class="getJenisBadgeClass(item.jenis)">
+                                                    {{ getJenisLabel(item.jenis) }}
+                                                </span>
+                                            </td>
+                                            <td>{{ item.tanggal }}</td>
                                             <td class="action-table-data">
                                                 <div class="edit-delete-action">
                                                     <a href="#" class="me-2 edit-icon p-2" data-bs-toggle="tooltip"
-                                                        data-bs-target="#editPegawaiModal" title="Edit"
-                                                        @click.prevent="openEditModal(produk)">
-                                                        <i data-feather="edit" class="feather-edit"></i>
+                                                        title="Pindah" @click.prevent="openEditModal(item.produk)">
+                                                        <i data-feather="arrow-left-circle" class="feather-edit"></i>
                                                     </a>
-                                                    <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Hapus"
-                                                        @click.prevent="handleDeleteProduk(produk.id)">
-                                                        <i data-feather="trash-2" class="feather-trash-2"></i>
+                                                    <a class="confirm-text p-2" data-bs-toggle="tooltip" title="Keluar"
+                                                        @click.prevent="handleDeleteProduk(item.id)">
+                                                        <i data-feather="arrow-right-circle" class="feather-trash-2"></i>
                                                     </a>
                                                 </div>
                                             </td>
@@ -162,17 +174,17 @@
                             </div>
                             <nav v-if="totalPages > 1" aria-label="Page navigation">
                                 <ul class="pagination justify-content-center mt-3">
-                                    <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                                    <li class="page-item" :class="{ disabled: currentPageProduk === 1 }">
                                         <a class="page-link" href="#"
-                                            @click.prevent="changePage(currentPage - 1)">Previous</a>
+                                            @click.prevent="changePage(currentPageProduk - 1)">Previous</a>
                                     </li>
                                     <li class="page-item" v-for="page in totalPages" :key="page"
-                                        :class="{ active: currentPage === page }">
+                                        :class="{ active: currentPageProduk === page }">
                                         <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
                                     </li>
-                                    <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                                    <li class="page-item" :class="{ disabled: currentPageProduk === totalPages }">
                                         <a class="page-link" href="#"
-                                            @click.prevent="changePage(currentPage + 1)">Next</a>
+                                            @click.prevent="changePage(currentPageProduk + 1)">Next</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -204,7 +216,7 @@
                                                 <div class="form-group mb-3">
                                                     <input type="text" class="form-control"
                                                         placeholder="Cari berdasarkan Kode Produk..."
-                                                        v-model="searchQuery">
+                                                        v-model="searchQueryModal">
                                                 </div>
                                             </div>
                                         </div>
@@ -232,7 +244,7 @@
                                                             Memuat produk...
                                                         </td>
                                                     </tr>
-                                                    <tr v-else-if="modalProdukList.length === 0">
+                                                    <tr v-else-if="filteredProdukList.length === 0">
                                                         <td colspan="6">
                                                             <div class="alert alert-danger d-flex align-items-center"
                                                                 role="alert">
@@ -292,11 +304,13 @@ import feather from 'feather-icons';
 import { nampanService } from '@/services/produk/nampanService';
 import { showToast } from "@/utilities/toastfy";
 import { nampanprodukService } from '@/services/produk/nampanprodukService';
+import { Modal } from 'bootstrap';
 
 // STATE
 const nampanList = ref([]);
 const nampanProdukList = ref([]);
-const currentPage = ref(1);
+const currentPageNampan = ref(1); // Perbarui nama state untuk nampan
+const currentPageProduk = ref(1); // Tambahkan state untuk produk
 const itemsPerPage = ref(5);
 const selectedNampanId = ref(null);
 const selectedNampanName = ref(null);
@@ -304,22 +318,33 @@ const selectedJenisProdukId = ref(null);
 const isLoadingNampan = ref(false);
 const isLoadingProduk = ref(false);
 const isHeaderCollapsed = ref(false);
-const searchQuery = ref('');
-const selectedProdukIds = ref(new Set()); // Tambahkan baris ini
+const searchQueryNampan = ref(''); // Perbarui nama state untuk pencarian nampan
+const selectedProdukIds = ref(new Set());
 
 // Modal State
 const modalProdukList = ref([]);
 const isLoadingModalProduk = ref(false);
+const searchQueryModal = ref(''); // Tambahkan state untuk pencarian modal produk
 
 // COMPUTED UNTUK PAGINATION NAMPAN
 const totalNampanItems = computed(() => nampanList.value.length);
 const totalNampanPages = computed(() => Math.ceil(totalNampanItems.value / itemsPerPage.value));
-const startNampanIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value);
-const paginatedNampanList = computed(() => nampanList.value.slice(startNampanIndex.value, startNampanIndex.value + itemsPerPage.value));
+const startNampanIndex = computed(() => (currentPageNampan.value - 1) * itemsPerPage.value);
+const paginatedNampanList = computed(() => {
+    // Implementasi pencarian nampan di sini
+    const query = searchQueryNampan.value.toLowerCase();
+    const filtered = nampanList.value.filter(nampan =>
+        nampan.nampan.toLowerCase().includes(query) ||
+        (nampan.jenis_produk && nampan.jenis_produk.jenis_produk.toLowerCase().includes(query))
+    );
+    const start = (currentPageNampan.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return filtered.slice(start, end);
+});
 
 // COMPUTED UNTUK PAGINATION PRODUK
 const paginatedProdukList = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const start = (currentPageProduk.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;
     return nampanProdukList.value.slice(start, end);
 });
@@ -328,78 +353,37 @@ const totalPages = computed(() => {
     return Math.ceil(nampanProdukList.value.length / itemsPerPage.value);
 });
 
-const selectAll = computed({
-    get() {
-        // Cek apakah semua produk yang difilter sudah dipilih
-        if (filteredProdukList.value.length === 0) return false;
-        return filteredProdukList.value.every(produk => selectedProdukIds.value.has(produk.id));
-    },
-    set(value) {
-        if (value) {
-            // Pilih semua produk yang difilter
-            filteredProdukList.value.forEach(produk => {
-                selectedProdukIds.value.add(produk.id);
-            });
-        } else {
-            // Hapus semua pilihan
-            selectedProdukIds.value.clear();
-        }
-    }
-});
-
-const handleStoreProdukNampan = async () => {
-    // Pastikan ada nampan yang dipilih
-    if (!selectedNampanId.value) {
-        showToast('Pilih nampan terlebih dahulu.', 'error');
-        return;
-    }
-
-    // Konversi Set menjadi array
-    const produkIdsToStore = Array.from(selectedProdukIds.value);
-
-    // Pastikan ada produk yang dipilih
-    if (produkIdsToStore.length === 0) {
-        showToast('Pilih setidaknya satu produk.', 'warning');
-        return;
-    }
-
-    const payload = {
-        nampanId: selectedNampanId.value,
-        produkIds: produkIdsToStore,
-    };
-
-    try {
-        // Asumsi API endpoint untuk menyimpan produk di nampan adalah 'storeProdukToNampan'
-        const response = await nampanprodukService.storeProdukNampan(payload);
-        showToast('Produk berhasil ditambahkan ke nampan!', 'success');
-
-        // Tutup modal setelah berhasil
-        const modal = bootstrap.Modal.getInstance(document.getElementById('tambahProdukModal'));
-        modal.hide();
-
-        // Refresh daftar produk di nampan saat ini
-        await fetchNampanProduk(selectedNampanId.value, selectedNampanName.value);
-
-        // Reset pilihan produk di modal
-        selectedProdukIds.value.clear();
-
-    } catch (error) {
-        console.error('Gagal menambahkan produk ke nampan:', error);
-        showToast('Gagal menambahkan produk. Silakan coba lagi.', 'error');
-    }
-};
-
+// COMPUTED untuk filter produk di modal
 const filteredProdukList = computed(() => {
-    if (!searchQuery.value) {
+    if (!searchQueryModal.value) {
         return modalProdukList.value;
     }
-    const query = searchQuery.value.toLowerCase();
+    const query = searchQueryModal.value.toLowerCase();
     return modalProdukList.value.filter(produk => {
         return produk.kodeproduk.toLowerCase().includes(query);
     });
 });
 
-// METHODS
+const selectAll = computed({
+    get() {
+        if (filteredProdukList.value.length === 0) return false;
+        return filteredProdukList.value.every(produk => selectedProdukIds.value.has(produk.id));
+    },
+    set(value) {
+        if (value) {
+            selectedProdukIds.value.clear();
+            filteredProdukList.value.forEach(produk => {
+                selectedProdukIds.value.add(produk.id);
+            });
+        } else {
+            selectedProdukIds.value.clear();
+        }
+    }
+});
+
+// ===================================
+// LOGIKA DATA NAMPAN DI LIST
+// ===================================
 const fetchDataFromApi = async () => {
     await fetchNampanList();
 };
@@ -426,7 +410,6 @@ const fetchNampanList = async () => {
 const fetchNampanProduk = async (nampanId, nampanName) => {
     selectedNampanId.value = nampanId;
     selectedNampanName.value = nampanName;
-    // Simpan jenis_produk_id untuk digunakan di modal
     const nampan = nampanList.value.find(n => n.id === nampanId);
     if (nampan) {
         selectedJenisProdukId.value = nampan.id;
@@ -445,14 +428,54 @@ const fetchNampanProduk = async (nampanId, nampanName) => {
     }
 };
 
+// Fungsi untuk mendapatkan kelas CSS badge
+const getJenisBadgeClass = (jenis) => {
+    if (jenis === 'awal') {
+        return 'bg-success';
+    } else if (jenis === 'keluar') {
+        return 'bg-danger';
+    } else {
+        return 'bg-secondary';
+    }
+};
+
+// Fungsi untuk mendapatkan teks badge
+const getJenisLabel = (jenis) => {
+    // Konversi ke huruf kecil untuk konsistensi
+    const lowerJenis = jenis.toLowerCase();
+    if (lowerJenis === 'masuk' || lowerJenis === 'awal') {
+        return 'Masuk';
+    } else if (lowerJenis === 'keluar') {
+        return 'Keluar';
+    } else {
+        return 'Tidak Dikenal';
+    }
+};
+
+const goToNampanPage = (page) => {
+    if (page >= 1 && page <= totalNampanPages.value) {
+        currentPageNampan.value = page;
+    }
+};
+
+const changePage = (page) => {
+    if (page >= 1 && page <= totalPages.value) {
+        currentPageProduk.value = page;
+    }
+};
+
+// ===================================
+// LOGIKA DATA PRODUK DI TABLE
+// ===================================
 const fetchProdukModal = async () => {
-    if (!selectedJenisProdukId.value) {
+    if (!selectedNampanId.value) {
         showToast('Silakan pilih nampan terlebih dahulu.', 'warning');
         return;
     }
 
     isLoadingModalProduk.value = true;
     try {
+        // Asumsi `getProduk` mengambil produk yang belum ada di nampan yang dipilih
         const response = await nampanprodukService.getProduk(selectedJenisProdukId.value);
         modalProdukList.value = response.Data || [];
     } catch (error) {
@@ -461,12 +484,6 @@ const fetchProdukModal = async () => {
         modalProdukList.value = [];
     } finally {
         isLoadingModalProduk.value = false;
-    }
-};
-
-const goToNampanPage = (page) => {
-    if (page >= 1 && page <= totalNampanPages.value) {
-        currentPage.value = page;
     }
 };
 
@@ -488,7 +505,67 @@ const handleDeleteProduk = (id) => {
 
 const handleSelectProduk = (produkId) => {
     console.log('Selected product with ID:', produkId);
-    // Tambahkan logika di sini untuk menambahkan produk ke nampan
+    if (selectedProdukIds.value.has(produkId)) {
+        selectedProdukIds.value.delete(produkId);
+    } else {
+        selectedProdukIds.value.add(produkId);
+    }
+};
+
+const handleStoreProdukNampan = async () => {
+    if (!selectedNampanId.value) {
+        showToast('Pilih nampan terlebih dahulu.', 'error');
+        return;
+    }
+
+    const produkIdsToStore = Array.from(selectedProdukIds.value);
+
+    if (produkIdsToStore.length === 0) {
+        showToast('Pilih setidaknya satu produk.', 'warning');
+        return;
+    }
+
+    // --- PERBAIKAN LOGIKA: Gunakan FormData dan sesuaikan dengan layanan ---
+    const formData = new FormData();
+
+    // Backend mengharapkan 'items' sebagai array
+    produkIdsToStore.forEach(id => {
+        formData.append('items[]', id);
+    });
+
+    // Backend juga mengharapkan 'jenis'
+    formData.append('jenis', 'awal');
+
+    try {
+        const response = await nampanprodukService.storeProdukNampan(selectedNampanId.value, formData);
+
+        if (response.success) {
+            showToast(response.message, 'success');
+
+            // Sembunyikan modal
+            const modalElement = document.getElementById('tambahProdukModal');
+            if (modalElement) {
+                const modal = Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
+            }
+
+            // Refresh data produk di nampan yang dipilih
+            await fetchNampanProduk(selectedNampanId.value, selectedNampanName.value);
+
+            // Reset pilihan produk di modal
+            selectedProdukIds.value.clear();
+        } else {
+            showToast(response.message, 'error');
+        }
+    } catch (error) {
+        console.error('Gagal menambahkan produk ke nampan:', error);
+        const errorMessage = error.response && error.response.data && error.response.data.message
+            ? error.response.data.message
+            : 'Gagal menambahkan produk. Silakan coba lagi.';
+        showToast(errorMessage, 'error');
+    }
 };
 
 const toggleHeaderCollapse = () => isHeaderCollapsed.value = !isHeaderCollapsed.value;
@@ -498,7 +575,7 @@ const openTambahProdukModal = () => {
         showToast('Silakan pilih nampan terlebih dahulu.', 'warning');
         return;
     }
-    // Jika nampan sudah dipilih, panggil fungsi untuk memuat data modal
+    searchQueryModal.value = ''; // Reset pencarian modal setiap kali dibuka
     fetchProdukModal();
 };
 
