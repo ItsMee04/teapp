@@ -37,12 +37,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3">
+                <div class="col-12 col-md-4 mb-3">
                     <div class="card settings-sidebar border p-3 rounded h-100">
                         <div class="sidebar-inner">
                             <h6>Data Nampan / Baki</h6>
-
-                            <ul class="list-group mt-2 mb-2" style="max-height: 400px; overflow-y: auto;">
+                            <ul class="list-group mt-2 mb-2" style="height: 400px; overflow-y: auto;">
                                 <li v-if="isLoadingNampan"
                                     class="list-group-item text-center text-muted d-flex align-items-center justify-content-center"
                                     style="height: 400px;">
@@ -93,7 +92,7 @@
                     </div>
                 </div>
 
-                <div class="col 8">
+                <div class="col-12 col-md-8">
                     <div class="card h-100">
                         <div class="card-header justify-content-between">
                             <div class="card-title">
@@ -101,9 +100,9 @@
                                 <span v-if="selectedNampanName">({{ selectedNampanName }})</span>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="height: 400px; overflow-y: auto;">
                             <div class="table-responsive">
-                                <table class="table text-nowrap table-striped table-hover">
+                                <table class="table text-nowrap table-hover">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
@@ -115,19 +114,28 @@
                                     </thead>
                                     <tbody>
                                         <tr v-if="isLoadingProduk">
-                                            <td colspan="5" class="text-center">
-                                                <div class="spinner-border text-secondary" role="status"></div>
+                                            <td colspan="6" class="text-center">
                                                 Memuat produk...
                                             </td>
                                         </tr>
                                         <tr v-else-if="nampanProdukList.length === 0 && !selectedNampanId">
-                                            <td colspan="5" class="text-center">
-                                                Pilih nampan dari daftar di sisi kiri.
+                                            <td colspan="6" class="text-center">
+                                                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                                    <i class="feather-alert-octagon flex-shrink-0 me-2"></i>
+                                                    <div>
+                                                        Pilih nampan dari daftar di sisi kiri.
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr v-else-if="nampanProdukList.length === 0 && selectedNampanId">
-                                            <td colspan="5" class="text-center">
-                                                Tidak ada produk di nampan ini.
+                                            <td colspan="6" class="text-center">
+                                                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                                    <i class="feather-alert-octagon flex-shrink-0 me-2"></i>
+                                                    <div>
+                                                        Tidak ada produk di nampan ini.
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr v-else v-for="(produk, index) in nampanProdukList" :key="produk.id">
@@ -190,9 +198,9 @@
                                     </button>
                                 </div>
                                 <div class="modal-body custom-modal-body">
-                                    <form @submit.prevent="handleStoreNampan">
+                                    <form @submit.prevent="handleStoreProdukNampan">
                                         <div class="row">
-                                            <div class="col-12">
+                                            <div class="col-4">
                                                 <div class="form-group mb-3">
                                                     <input type="text" class="form-control"
                                                         placeholder="Cari berdasarkan Kode Produk..."
@@ -204,6 +212,13 @@
                                             <table class="table text-nowrap table-striped table-hover">
                                                 <thead>
                                                     <tr>
+                                                        <th class="no-sort">
+                                                            <label class="checkboxs">
+                                                                <input type="checkbox" id="select-all"
+                                                                    v-model="selectAll">
+                                                                <span class="checkmarks"></span>
+                                                            </label>
+                                                        </th>
                                                         <th>No.</th>
                                                         <th>Kode Produk</th>
                                                         <th>Berat</th>
@@ -213,19 +228,30 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr v-if="isLoadingModalProduk">
-                                                        <td colspan="5" class="text-center">
-                                                            <div class="spinner-border text-secondary" role="status">
-                                                            </div>
+                                                        <td colspan="6" class="text-center">
                                                             Memuat produk...
                                                         </td>
                                                     </tr>
                                                     <tr v-else-if="modalProdukList.length === 0">
-                                                        <td colspan="5" class="text-center">
-                                                            Tidak ada produk yang tersedia.
+                                                        <td colspan="6">
+                                                            <div class="alert alert-danger d-flex align-items-center"
+                                                                role="alert">
+                                                                <i class="feather-alert-octagon flex-shrink-0 me-2"></i>
+                                                                <div>
+                                                                    Tidak ada produk yang tersedia.
+                                                                </div>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                     <tr v-else v-for="(produkModal, index) in filteredProdukList"
                                                         :key="produkModal.id">
+                                                        <td>
+                                                            <label class="checkboxs">
+                                                                <input type="checkbox" :value="produkModal.id"
+                                                                    v-model="selectedProdukIds">
+                                                                <span class="checkmarks"></span>
+                                                            </label>
+                                                        </td>
                                                         <td>{{ index + 1 }}</td>
                                                         <td>{{ produkModal.kodeproduk }}</td>
                                                         <td>{{ produkModal.berat }}</td>
@@ -266,7 +292,6 @@ import feather from 'feather-icons';
 import { nampanService } from '@/services/produk/nampanService';
 import { showToast } from "@/utilities/toastfy";
 import { nampanprodukService } from '@/services/produk/nampanprodukService';
-import { produkService } from '@/services/produk/produkService'; // Layanan baru untuk produk
 
 // STATE
 const nampanList = ref([]);
@@ -280,6 +305,7 @@ const isLoadingNampan = ref(false);
 const isLoadingProduk = ref(false);
 const isHeaderCollapsed = ref(false);
 const searchQuery = ref('');
+const selectedProdukIds = ref(new Set()); // Tambahkan baris ini
 
 // Modal State
 const modalProdukList = ref([]);
@@ -301,6 +327,67 @@ const paginatedProdukList = computed(() => {
 const totalPages = computed(() => {
     return Math.ceil(nampanProdukList.value.length / itemsPerPage.value);
 });
+
+const selectAll = computed({
+    get() {
+        // Cek apakah semua produk yang difilter sudah dipilih
+        if (filteredProdukList.value.length === 0) return false;
+        return filteredProdukList.value.every(produk => selectedProdukIds.value.has(produk.id));
+    },
+    set(value) {
+        if (value) {
+            // Pilih semua produk yang difilter
+            filteredProdukList.value.forEach(produk => {
+                selectedProdukIds.value.add(produk.id);
+            });
+        } else {
+            // Hapus semua pilihan
+            selectedProdukIds.value.clear();
+        }
+    }
+});
+
+const handleStoreProdukNampan = async () => {
+    // Pastikan ada nampan yang dipilih
+    if (!selectedNampanId.value) {
+        showToast('Pilih nampan terlebih dahulu.', 'error');
+        return;
+    }
+
+    // Konversi Set menjadi array
+    const produkIdsToStore = Array.from(selectedProdukIds.value);
+
+    // Pastikan ada produk yang dipilih
+    if (produkIdsToStore.length === 0) {
+        showToast('Pilih setidaknya satu produk.', 'warning');
+        return;
+    }
+
+    const payload = {
+        nampanId: selectedNampanId.value,
+        produkIds: produkIdsToStore,
+    };
+
+    try {
+        // Asumsi API endpoint untuk menyimpan produk di nampan adalah 'storeProdukToNampan'
+        const response = await nampanprodukService.storeProdukNampan(payload);
+        showToast('Produk berhasil ditambahkan ke nampan!', 'success');
+
+        // Tutup modal setelah berhasil
+        const modal = bootstrap.Modal.getInstance(document.getElementById('tambahProdukModal'));
+        modal.hide();
+
+        // Refresh daftar produk di nampan saat ini
+        await fetchNampanProduk(selectedNampanId.value, selectedNampanName.value);
+
+        // Reset pilihan produk di modal
+        selectedProdukIds.value.clear();
+
+    } catch (error) {
+        console.error('Gagal menambahkan produk ke nampan:', error);
+        showToast('Gagal menambahkan produk. Silakan coba lagi.', 'error');
+    }
+};
 
 const filteredProdukList = computed(() => {
     if (!searchQuery.value) {

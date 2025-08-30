@@ -30,4 +30,21 @@ export const nampanprodukService = {
             throw error;
         }
     },
+
+     /**
+     * Memperbarui data jenis yang sudah ada di API.
+     * @param {number} id ID jenis yang akan diperbarui.
+     * @param {FormData} formData Objek FormData yang berisi data yang diperbarui.
+     * @returns {Promise<Object>}
+     */
+    async storeProdukNampan(id, formData) {
+        try {
+            // Menggunakan method POST dengan header method override untuk PUT
+            const response = await api.post(`/nampanProduk/storeProdukNampan/${id}`,formData);
+            return response.data;
+        } catch (error) {
+            console.error("Gagal memperbarui data jenis:", error.response?.data);
+            throw error;
+        }
+    },
 }
